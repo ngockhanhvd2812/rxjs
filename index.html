@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học RxJS Trực Quan - Từ Người Mới Đến Chuyên Gia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/7.8.1/rxjs.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #4b5563;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --dark: #1f2937;
+            --light: #f9fafb;
+        }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #f0f4f8, #e2e8f0);
+            color: #1f2937;
+        }
+        
+        .header-bg {
+            background: linear-gradient(to right, #1e3a8a, #3b82f6);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .marble {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px; 
+            height: 40px;
+            padding: 0 8px; 
+            border-radius: 50%;
+            background-color: #3498db;
+            color: white;
+            margin: 5px;
+            font-weight: bold;
+            transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+            opacity: 0;
+            transform: translateX(-20px);
+            font-size: 0.8rem; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            animation-fill-mode: forwards;
+        }
+        
+        .marble.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .marble.error { background-color: #e74c3c; }
+        .marble.fallback { background-color: #f39c12; }
+        .marble.complete { background-color: #7f8c8d; text-transform: uppercase; font-size: 0.7rem; }
+        .marble.subject-s1 { background-color: #9b59b6; } 
+        .marble.subject-s2 { background-color: #e67e22; } 
+        .marble.loading { background-color: #f1c40f; color: #333; animation: pulse 1.5s infinite; }
+        .marble.api1 { background-color: #16a085; } 
+        .marble.api2 { background-color: #27ae60; } 
+        
+        .marble-timeline {
+            position: relative;
+            padding: 15px 0;
+        }
+        
+        .marble-timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #cbd5e1;
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+
+        .operator-box, .subject-box, .example-box-interactive {
+            min-height: 60px;
+            border: 2px dashed #2ecc71;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            text-align: center;
+            background-color: #f0fff4;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .operator-box::before, .subject-box::before {
+            content: attr(data-label);
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: white;
+            padding: 0 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #4b5563;
+        }
+        
+        .subject-box { 
+            border-color: #3498db; 
+            background-color: #eaf5ff; 
+        }
+        
+        .example-box-interactive { 
+            border-color: #e67e22; 
+            background-color: #fff8f0; 
+        }
+
+        .code-block {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            font-size: 0.9em;
+            overflow-x: auto;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+        }
+        
+        .nav-button {
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 500;
+            background-color: #e5e7eb;
+            color: #4b5563;
+            border: 1px solid #d1d5db;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .nav-button:hover {
+            background-color: #d1d5db;
+            transform: translateY(-2px);
+        }
+        
+        .nav-button.active {
+            background-color: #2563eb; 
+            color: white;
+            border-color: #2563eb;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+        }
+        
+        .content-section {
+            display: none; 
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .content-section.active {
+            display: block; 
+        }
+        
+        .btn {
+            background-color: #3b82f6; 
+            color: white;
+            padding: 10px 15px; 
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 8px; 
+            margin-bottom: 8px; 
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .btn:hover {
+            background-color: #2563eb; 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .btn:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+            transform: translateY(0);
+            box-shadow: none;
+        }
+        
+        .btn-secondary {
+            background-color: #6b7280; 
+        }
+        
+        .btn-secondary:hover {
+            background-color: #4b5563; 
+        }
+        
+        .btn-success {
+             background-color: #22c55e; 
+        }
+        
+        .btn-success:hover {
+            background-color: #16a34a; 
+        }
+        
+        .btn-warning {
+            background-color: #f59e0b; 
+        }
+        
+        .btn-warning:hover {
+            background-color: #d97706; 
+        }
+        
+        .btn-danger {
+            background-color: #ef4444; 
+        }
+        
+        .btn-danger:hover {
+            background-color: #dc2626; 
+        }
+        
+        .input-field {
+            border: 1px solid #d1d5db; 
+            padding: 10px 12px;
+            border-radius: 8px;
+            width: 100%;
+            margin-top: 5px;
+            margin-bottom: 15px; 
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        
+        .input-field-sm {
+            width: auto;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        .draggable {
+            width: 100px; 
+            height: 100px; 
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            color: white;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            border-radius: 8px; 
+            cursor: grab; 
+            position: absolute; 
+            user-select: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            font-weight: 600;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        
+        .draggable.dragging { 
+            cursor: grabbing; 
+            background: linear-gradient(135deg, #ea580c, #c2410c);
+            transform: scale(1.05);
+            z-index: 1000;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+        
+        #dropZone {
+            width: 100%; 
+            height: 150px; 
+            background-color: #ecf0f1; 
+            border: 2px dashed #bdc3c7;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            border-radius: 8px; 
+            margin-top: 15px; 
+            color: #7f8c8d; 
+            font-style: italic;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        #dropZone.over { 
+            background-color: #d1e7dd; 
+            border-color: #22c55e; 
+            color: #166534;
+        }
+        
+        #infiniteScrollContainer {
+            height: 300px; 
+            overflow-y: auto; 
+            border: 1px solid #d1d5db; 
+            padding: 10px; 
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+        
+        #infiniteScrollContainer .item {
+            padding: 12px; 
+            border-bottom: 1px solid #e5e7eb; 
+            background-color: white; 
+            margin-bottom: 8px; 
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        #infiniteScrollContainer .loading-more {
+            text-align: center; 
+            padding: 15px; 
+            font-style: italic; 
+            color: #6b7280;
+        }
+        
+        .section-title {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background-color: #2563eb;
+            border-radius: 50%;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2px;
+            height: 100%;
+            background-color: #d1d5db;
+            z-index: -1;
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
+            border-left: 4px solid #2563eb;
+        }
+        
+        .info-card h3 {
+            margin-top: 0;
+            color: #1e40af;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .timeline-container {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #d1d5db;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #2563eb;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #2563eb;
+        }
+        
+        .timeline-content {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .history-highlight {
+            background: linear-gradient(120deg, #f0f9ff, #dbeafe);
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+        
+        .concept-diagram {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .analogy-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .analogy-title {
+            color: #1e40af;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .interactive-demo {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .visualization {
+            min-height: 150px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            position: relative;
+        }
+        
+        .conclusion-box {
+            background: linear-gradient(135deg, #dbeafe, #eff6ff);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+            border-left: 4px solid #2563eb;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-button {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+                margin-bottom: 8px;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .marble {
+                min-width: 35px;
+                height: 35px;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="container mx-auto max-w-5xl bg-white p-6 md:p-8 rounded-xl shadow-xl">
+        <header class="mb-8 text-center header-bg py-8 px-4">
+            <div class="max-w-2xl mx-auto">
+                <h1 class="text-3xl md:text-4xl font-bold mb-4">Học RxJS Trực Quan</h1>
+                <p class="text-lg md:text-xl opacity-90">Từ người mới bắt đầu đến chuyên gia lập trình phản ứng</p>
+                <div class="mt-6">
+                    <div class="inline-flex bg-white bg-opacity-20 backdrop-blur-sm rounded-full px-4 py-2 text-sm">
+                        <span class="mr-2">⭐</span> Khóa học trực quan nhất về Reactive Programming
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <nav class="flex flex-wrap justify-center gap-2 mb-8">
+            <button data-section="intro" class="nav-button active">Tổng Quan</button>
+            <button data-section="basic-operators" class="nav-button">Operators Cơ Bản</button>
+            <button data-section="advanced-operators" class="nav-button">Operators Nâng Cao</button>
+            <button data-section="more-advanced-operators" class="nav-button">Operators Cao Cấp</button>
+            <button data-section="useful-operators" class="nav-button">Operators Hữu Ích</button>
+            <button data-section="subjects" class="nav-button">Subjects</button>
+            <button data-section="real-world" class="nav-button">Ví Dụ Thực Tế</button>
+            <button data-section="hardcore-examples" class="nav-button">Ví Dụ Khó</button>
+            <button data-section="ultra-hardcore-examples" class="nav-button">Ví Dụ Siêu Khó</button>
+        </nav>
+
+        <main id="app-content" class="overflow-y-auto" style="max-height: 70vh;">
+            <!-- Section 1: Introduction -->
+            <section id="intro" class="content-section active">
+                 <h2 class="text-2xl md:text-3xl font-semibold text-blue-700 mb-6 section-title">1. Chào mừng đến với RxJS</h2>
+                 <div class="info-card">
+                    <h3>RxJS là gì?</h3>
+                    <p>RxJS (Reactive Extensions for JavaScript) là một thư viện giúp lập trình với các luồng dữ liệu bất đồng bộ. Hãy tưởng tượng bạn đang xử lý mọi thứ, từ sự kiện click chuột, nhập liệu, đến dữ liệu từ API, như những dòng sông (streams) chảy liên tục. RxJS cung cấp cho bạn các công cụ mạnh mẽ để điều khiển, biến đổi và kết hợp những dòng sông này.</p>
+                </div>
+                <div class="analogy-box">
+                    <p class="analogy-title">💡 Phép so sánh: Dây chuyền sản xuất</p>
+                    <p>Hãy xem một <strong>Observable</strong> như một dây chuyền sản xuất. Nó đưa ra các "sản phẩm thô" (dữ liệu). Các <strong>Operators</strong> (như <code>map</code>, <code>filter</code>) là các cỗ máy trên dây chuyền, mỗi máy thực hiện một công đoạn xử lý. Cuối cùng, <strong>Observer</strong> (người đăng ký) là người nhận "thành phẩm" (dữ liệu đã qua xử lý).</p>
+                </div>
+                <div class="interactive-demo">
+                    <h3 class="font-semibold text-lg mb-3">Observable đầu tiên của bạn</h3>
+                    <p class="mb-4">Đây là một Observable đơn giản nhất, sử dụng hàm <code>of</code> để tạo ra một luồng dữ liệu phát ra một vài giá trị rồi kết thúc.</p>
+                    <button id="runFirstObservable" class="btn">Chạy of('A', 'B', 'C')</button>
+                    <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Luồng dữ liệu (Source):</div>
+                    <div id="firstObservableStream" class="marble-timeline"></div>
+                    <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Kết quả nhận được (Observer):</div>
+                    <div id="firstObserverOutput" class="bg-gray-50 p-4 rounded-lg min-h-[80px]"></div>
+                </div>
+            </section>
+
+            <!-- Section 2: Basic Operators -->
+            <section id="basic-operators" class="content-section">
+                <h2 class="text-2xl md:text-3xl font-semibold text-blue-700 mb-6 section-title">2. Các Operators Cơ Bản</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Map -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3"><code class="text-purple-600">map(fn)</code> - Biến đổi</h3>
+                        <p class="mb-4">Biến đổi mỗi giá trị được phát ra bởi luồng nguồn. Ví dụ: nhân mỗi số với 10.</p>
+                        <button id="runMapOperator" class="btn">Chạy Map</button>
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Input (1,2,3 mỗi 0.5s):</div>
+                        <div id="mapInputStream" class="marble-timeline"></div>
+                        <div class="operator-box" data-label="PIPE: map(x => x * 10)">x * 10</div>
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Output:</div>
+                        <div id="mapOutputStream" class="marble-timeline"></div>
+                    </div>
+                    <!-- Filter -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3"><code class="text-blue-600">filter(fn)</code> - Lọc</h3>
+                        <p class="mb-4">Chỉ cho phép các giá trị thỏa mãn một điều kiện đi qua. Ví dụ: chỉ lấy các số chẵn.</p>
+                        <button id="runFilterOperator" class="btn">Chạy Filter</button>
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Input (1..5 mỗi 0.5s):</div>
+                        <div id="filterInputStream" class="marble-timeline"></div>
+                        <div class="operator-box" data-label="PIPE: filter(x => x % 2 === 0)">x % 2 === 0</div>
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Output:</div>
+                        <div id="filterOutputStream" class="marble-timeline"></div>
+                    </div>
+                     <!-- Tap -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3"><code class="text-green-600">tap(fn)</code> - Hành động phụ</h3>
+                        <p class="mb-4">Thực hiện một hành động phụ (ví dụ: logging) với mỗi giá trị mà không làm thay đổi luồng.</p>
+                        <button id="runTapOperator" class="btn">Chạy Tap</button>
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Input (A,B,C mỗi 0.5s):</div>
+                        <div id="tapInputStream" class="marble-timeline"></div>
+                        <div class="operator-box" data-label="PIPE: tap(x => console.log(x))">LOG</div>
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Output:</div>
+                        <div id="tapOutputStream" class="marble-timeline"></div>
+                        <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Log từ tap:</div>
+                        <div id="tapLoggerOutput" class="bg-gray-50 p-4 rounded-lg min-h-[80px]"></div>
+                    </div>
+                    <!-- Scan -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3"><code class="text-orange-600">scan(fn, seed)</code> - Tích lũy</h3>
+                        <p class="mb-4">Tích lũy giá trị theo thời gian, tương tự <code>reduce</code> của Array nhưng phát ra mỗi giá trị trung gian.</p>
+                        <button id="runScanOperator" class="btn">Chạy Scan</button>
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Input (1,2,3,4 mỗi 0.5s):</div>
+                        <div id="scanInputStream" class="marble-timeline"></div>
+                        <div class="operator-box" data-label="PIPE: scan((acc, curr) => acc + curr, 0)">TÍNH TỔNG</div>
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Output:</div>
+                        <div id="scanOutputStream" class="marble-timeline"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: Advanced Operators -->
+            <section id="advanced-operators" class="content-section">
+                 <h2 class="text-2xl md:text-3xl font-semibold text-blue-700 mb-6 section-title">3. Operators Chuyển Đổi (Flattening)</h2>
+                 <p class="mb-4 info-card">Các operators này xử lý "Observable của Observable" (luồng lồng trong luồng). Tình huống phổ biến là khi một sự kiện (như click) kích hoạt một tác vụ bất đồng bộ khác (như gọi API).</p>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- mergeMap -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3"><code class="text-red-600">mergeMap</code> - Hợp nhất luồng</h3>
+                        <p class="mb-4">Tạo và đăng ký vào một luồng con cho mỗi giá trị từ luồng cha. Tất cả các luồng con chạy song song và kết quả được hợp nhất.</p>
+                        <button id="runMergeMap" class="btn">Click để phát luồng con</button>
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Input (Clicks):</div>
+                        <div id="mergeMapInputStream" class="marble-timeline"></div>
+                        <div class="operator-box" data-label="PIPE: mergeMap">Tạo & Hợp nhất luồng con</div>
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Output:</div>
+                        <div id="mergeMapOutputStream" class="marble-timeline"></div>
+                    </div>
+                    <!-- switchMap -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3"><code class="text-yellow-600">switchMap</code> - Chuyển luồng</h3>
+                        <p class="mb-4">Giống <code>mergeMap</code>, nhưng khi luồng cha phát giá trị mới, nó sẽ hủy luồng con trước đó và chuyển sang luồng con mới. Rất hữu ích cho tìm kiếm.</p>
+                        <button id="runSwitchMap" class="btn">Click để chuyển luồng</button>
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Input (Clicks):</div>
+                        <div id="switchMapInputStream" class="marble-timeline"></div>
+                        <div class="operator-box" data-label="PIPE: switchMap">Hủy luồng cũ & Chuyển luồng mới</div>
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Output:</div>
+                        <div id="switchMapOutputStream" class="marble-timeline"></div>
+                    </div>
+                     <!-- concatMap -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3"><code class="text-green-600">concatMap</code> - Nối luồng</h3>
+                        <p class="mb-4">Chạy các luồng con một cách tuần tự. Luồng con tiếp theo chỉ bắt đầu khi luồng con trước đó đã hoàn thành. Đảm bảo thứ tự.</p>
+                        <button id="runConcatMap" class="btn">Click để xếp hàng luồng</button>
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Input (Clicks):</div>
+                        <div id="concatMapInputStream" class="marble-timeline"></div>
+                        <div class="operator-box" data-label="PIPE: concatMap">Xếp hàng & Chạy tuần tự</div>
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Output:</div>
+                        <div id="concatMapOutputStream" class="marble-timeline"></div>
+                    </div>
+                    <!-- exhaustMap -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3"><code class="text-blue-600">exhaustMap</code> - Bỏ qua luồng</h3>
+                        <p class="mb-4">Bỏ qua các giá trị mới từ luồng cha trong khi một luồng con đang hoạt động. Hữu ích để chống click-spam.</p>
+                        <button id="runExhaustMap" class="btn">Click để chạy luồng (thử click nhanh)</button>
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Input (Clicks):</div>
+                        <div id="exhaustMapInputStream" class="marble-timeline"></div>
+                        <div class="operator-box" data-label="PIPE: exhaustMap">Bỏ qua click khi đang bận</div>
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Output:</div>
+                        <div id="exhaustMapOutputStream" class="marble-timeline"></div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 4: More Advanced Operators -->
+            <section id="more-advanced-operators" class="content-section">
+                <h2 class="text-2xl md:text-3xl font-semibold text-blue-700 mb-6 section-title">4. Operators Kết Hợp (Combination)</h2>
+                <p class="mb-4 info-card">Các operators này cho phép bạn kết hợp nhiều luồng dữ liệu lại với nhau theo những cách khác nhau.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- combineLatest -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3"><code class="text-indigo-600">combineLatest</code> - Kết hợp giá trị mới nhất</h3>
+                        <p class="mb-4">Khi bất kỳ luồng nào phát, nó sẽ phát ra một mảng chứa giá trị mới nhất từ TẤT CẢ các luồng. Sẽ không phát gì cho đến khi mọi luồng đã phát ít nhất một lần.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                           <button id="emitSourceACombine" class="btn btn-secondary">Phát Stream A</button>
+                           <button id="emitSourceBCombine" class="btn btn-secondary">Phát Stream B</button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>Stream A: <div id="combineSourceAStream" class="marble-timeline min-h-[50px]"></div></div>
+                            <div>Stream B: <div id="combineSourceBStream" class="marble-timeline min-h-[50px]"></div></div>
+                        </div>
+                        <div class="operator-box" data-label="combineLatest([streamA, streamB])">Kết hợp</div>
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Output:</div>
+                        <div id="combineOutputStream" class="marble-timeline"></div>
+                    </div>
+                    <!-- forkJoin -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3"><code class="text-teal-600">forkJoin</code> - Chờ tất cả hoàn thành</h3>
+                        <p class="mb-4">Tương tự <code>Promise.all</code>. Chờ cho tất cả các luồng nguồn hoàn thành, sau đó phát ra một mảng chứa giá trị CUỐI CÙNG từ mỗi luồng.</p>
+                        <button id="runForkJoin" class="btn">Chạy 2 API song song</button>
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>API 1 (1.5s): <div id="forkJoinSource1Stream" class="marble-timeline min-h-[50px]"></div></div>
+                            <div>API 2 (2.5s): <div id="forkJoinSource2Stream" class="marble-timeline min-h-[50px]"></div></div>
+                        </div>
+                        <div class="operator-box" data-label="forkJoin({ api1, api2 })">Chờ</div>
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Output (chỉ khi cả 2 xong):</div>
+                        <div id="forkJoinOutputStream" class="marble-timeline"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: Useful Operators -->
+            <section id="useful-operators" class="content-section">
+                <h2 class="text-2xl md:text-3xl font-semibold text-blue-700 mb-6 section-title">5. Operators Hữu Ích Khác</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Take -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3"><code class="text-green-600">take(count)</code> - Giới Hạn Số Lượng</h3>
+                        <p class="mb-4">Chỉ lấy một số lượng giá trị xác định từ luồng dữ liệu.</p>
+                        
+                        <button id="runTakeOperator" class="btn mb-2">Chạy Take</button>
+                        <label for="takeCountInput" class="text-sm font-medium text-gray-700 mr-2">Số lượng lấy:</label>
+                        <input type="number" id="takeCountInput" value="3" class="input-field input-field-sm w-20 mb-4">
+                        
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Input (0,1,2,... mỗi 0.5s):</div>
+                        <div id="takeInputStream" class="marble-timeline"></div>
+                        
+                        <div class="operator-box" data-label="PIPE: TAKE">TAKE(<span id="takeCountDisplay">3</span>)</div>
+                        
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Output:</div>
+                        <div id="takeOutputStream" class="marble-timeline"></div>
+                        
+                        <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Kết quả:</div>
+                        <div id="takeObserverOutput" class="bg-gray-50 p-4 rounded-lg min-h-[80px]"></div>
+                    </div>
+                    
+                    <!-- Zip -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3"><code class="text-orange-600">zip(obs1,...)</code> - Ghép Cặp</h3>
+                        <p class="mb-4">Ghép cặp các giá trị từ nhiều luồng theo thứ tự xuất hiện.</p>
+                        
+                        <button id="runZipOperator" class="btn mb-4">Chạy/Reset</button>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <button id="emitSource1Zip" class="btn btn-secondary">Phát Stream A</button>
+                            <button id="emitSource2Zip" class="btn btn-secondary">Phát Stream B</button>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <div class="text-sm text-gray-600 mb-2 font-medium">Stream A:</div>
+                                <div id="zipSource1Stream" class="marble-timeline min-h-[50px]"></div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-600 mb-2 font-medium">Stream B:</div>
+                                <div id="zipSource2Stream" class="marble-timeline min-h-[50px]"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="operator-box" data-label="ZIP">ZIP</div>
+                        
+                        <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Output (Ghép cặp):</div>
+                        <div id="zipOutputStream" class="marble-timeline"></div>
+                        
+                        <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Log:</div>
+                        <div id="zipLoggerOutput" class="bg-gray-50 p-4 rounded-lg min-h-[100px] font-mono text-sm"></div>
+                    </div>
+                    
+                    <!-- CatchError -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3"><code class="text-red-700">catchError(fn)</code> - Xử Lý Lỗi</h3>
+                        <p class="mb-4">Bắt và xử lý lỗi trong luồng dữ liệu, trả về một giá trị thay thế hoặc luồng mới.</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <button id="runCatchErrorStream" class="btn btn-danger">Chạy Stream (LỖI)</button>
+                            <button id="runCatchErrorStreamNoError" class="btn btn-success">Chạy Stream (OK)</button>
+                        </div>
+                        
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Input (1,2, LỖI/3):</div>
+                        <div id="catchErrorInputStream" class="marble-timeline"></div>
+                        
+                        <div class="operator-box" data-label="PIPE: CATCHERROR">CATCHERROR (trả về 'Đã Fix')</div>
+                        
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Output:</div>
+                        <div id="catchErrorOutputStream" class="marble-timeline"></div>
+                        
+                        <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Kết quả:</div>
+                        <div id="catchErrorObserverOutput" class="bg-gray-50 p-4 rounded-lg min-h-[80px]"></div>
+                    </div>
+                    
+                    <!-- StartWith -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3"><code class="text-blue-500">startWith(...values)</code> - Bắt Đầu Với Giá Trị</h3>
+                        <p class="mb-4">Thêm các giá trị vào đầu luồng dữ liệu trước khi luồng chính bắt đầu phát giá trị.</p>
+                        
+                        <button id="runStartWithOperator" class="btn mb-4">Chạy StartWith</button>
+                        <input type="text" id="startWithValuesInput" value="-1,0" class="input-field mb-4" placeholder="Giá trị bắt đầu, cách nhau bởi dấu phẩy, vd: -1,0,Hi">
+                        
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Stream gốc (1,2,3 sau 1s):</div>
+                        <div id="startWithInputStream" class="marble-timeline"></div>
+                        
+                        <div class="operator-box" data-label="PIPE: STARTWITH">STARTWITH(<span id="startWithValuesDisplay">-1,0</span>)</div>
+                        
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Output:</div>
+                        <div id="startWithOutputStream" class="marble-timeline"></div>
+                        
+                        <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Kết quả:</div>
+                        <div id="startWithObserverOutput" class="bg-gray-50 p-4 rounded-lg min-h-[80px]"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: Subjects -->
+            <section id="subjects" class="content-section">
+                <h2 class="text-2xl md:text-3xl font-semibold text-blue-700 mb-6 section-title">6. Subjects - Đa Hướng Dữ Liệu</h2>
+                
+                <div class="info-card">
+                    <p>Subject là một dạng đặc biệt của Observable cho phép đa hướng dữ liệu - nhiều Observer có thể subscribe vào cùng một Subject. Subject cũng là một Observer, có thể nhận dữ liệu thông qua các phương thức next(), error() và complete().</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Subject -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3"><code class="text-purple-700">Subject</code></h3>
+                        <p class="mb-4">Subject cơ bản - Observer chỉ nhận các giá trị phát ra sau khi subscribe.</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <button id="runBasicSubject" class="btn btn-success">Tạo Subject & Sub1</button>
+                            <button id="emitToBasicSubject" class="btn btn-warning">Phát giá trị</button>
+                            <button id="addBasicSubjectSub2" class="btn btn-info">Thêm Sub2</button>
+                        </div>
+                        
+                        <div class="subject-box" data-label="SUBJECT">SUBJECT</div>
+                        
+                        <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Log Subject:</div>
+                        <div id="basicSubjectLog" class="bg-gray-50 p-4 rounded-lg min-h-[80px] text-sm"></div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <div class="text-sm text-gray-600 mb-2 font-medium">Subscriber 1 nhận:</div>
+                                <div id="basicSubjectSub1Output" class="marble-timeline min-h-[50px]"></div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-600 mb-2 font-medium">Subscriber 2 nhận:</div>
+                                <div id="basicSubjectSub2Output" class="marble-timeline min-h-[50px]"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- BehaviorSubject -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3"><code class="text-green-700">BehaviorSubject(initialValue)</code></h3>
+                        <p class="mb-4">Lưu trữ giá trị hiện tại và phát nó cho các subscriber mới ngay khi họ subscribe.</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <button id="runBehaviorSubject" class="btn btn-success">Tạo & Sub1</button>
+                            <button id="emitToBehaviorSubject" class="btn btn-warning">Phát giá trị</button>
+                            <button id="addBehaviorSubjectSub2" class="btn btn-info">Thêm Sub2</button>
+                        </div>
+                        
+                        <div class="subject-box" data-label="BEHAVIOR_SUBJECT">BEHAVIOR_SUBJECT (khởi tạo với 'Hiếu')</div>
+                        
+                        <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Log BehaviorSubject:</div>
+                        <div id="behaviorSubjectLog" class="bg-gray-50 p-4 rounded-lg min-h-[80px] text-sm"></div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <div class="text-sm text-gray-600 mb-2 font-medium">Subscriber 1 nhận:</div>
+                                <div id="behaviorSubjectSub1Output" class="marble-timeline min-h-[50px]"></div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-600 mb-2 font-medium">Subscriber 2 nhận:</div>
+                                <div id="behaviorSubjectSub2Output" class="marble-timeline min-h-[50px]"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- ReplaySubject -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3"><code class="text-blue-700">ReplaySubject(bufferSize)</code></h3>
+                        <p class="mb-4">Lưu trữ một số lượng giá trị đã phát trước đó và phát lại cho các subscriber mới.</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <button id="runReplaySubject" class="btn btn-success">Tạo & Sub1</button>
+                            <button id="emitToReplaySubject" class="btn btn-warning">Phát giá trị</button>
+                            <button id="addReplaySubjectSub2" class="btn btn-info">Thêm Sub2</button>
+                        </div>
+                        
+                        <div class="subject-box" data-label="REPLAY_SUBJECT">REPLAY_SUBJECT (nhớ 2 giá trị)</div>
+                        
+                        <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Log ReplaySubject:</div>
+                        <div id="replaySubjectLog" class="bg-gray-50 p-4 rounded-lg min-h-[80px] text-sm"></div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <div class="text-sm text-gray-600 mb-2 font-medium">Subscriber 1 nhận:</div>
+                                <div id="replaySubjectSub1Output" class="marble-timeline min-h-[50px]"></div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-600 mb-2 font-medium">Subscriber 2 nhận:</div>
+                                <div id="replaySubjectSub2Output" class="marble-timeline min-h-[50px]"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 7: Real-World Examples -->
+            <section id="real-world" class="content-section">
+                 <h2 class="text-2xl md:text-3xl font-semibold text-blue-700 mb-6 section-title">7. Ví Dụ Thực Tế</h2>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Simple Type Ahead -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3">7.1. Gợi ý tìm kiếm (Typeahead)</h3>
+                        <p class="mb-4">Một ứng dụng kinh điển của RxJS: đợi người dùng ngừng gõ, sau đó mới thực hiện tìm kiếm để tránh các request không cần thiết.</p>
+                        <input type="text" id="typeaheadInput" placeholder="Gõ để tìm kiếm..." class="input-field mb-4">
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Stream gõ phím:</div>
+                        <div id="typeaheadInputStream" class="marble-timeline"></div>
+                        <div class="operator-box" data-label="PIPE: debounceTime(400) -> distinctUntilChanged() -> switchMap(apiCall)">Xử lý tìm kiếm</div>
+                        <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Kết quả từ API (giả):</div>
+                        <div id="typeaheadResult" class="bg-gray-50 p-4 rounded-lg min-h-[80px]"></div>
+                    </div>
+                    <!-- Progress Bar -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3">7.2. Thanh tiến trình (Progress Bar)</h3>
+                        <p class="mb-4">Sử dụng RxJS để điều khiển một thanh tiến trình, rất hữu ích cho việc hiển thị trạng thái tải file hoặc các tác vụ kéo dài.</p>
+                        <button id="startProgressBar" class="btn">Bắt đầu tải</button>
+                        <div class="progress-bar mt-4">
+                            <div id="progressFill" class="progress-fill"></div>
+                        </div>
+                        <div id="progressStatus" class="text-center font-semibold text-blue-700 mt-2"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 8: Hardcore Examples -->
+            <section id="hardcore-examples" class="content-section">
+                <h2 class="text-2xl md:text-3xl font-semibold text-blue-700 mb-6 section-title">8. Ví Dụ Khó Nhằn</h2>
+                
+                <div class="grid grid-cols-1 gap-6">
+                    <!-- Advanced Type Ahead -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3">8.1. Tìm Kiếm Nâng Cao: Loading & Xử Lý Lỗi</h3>
+                        <p class="mb-4">Tìm kiếm thông minh với hiệu ứng loading, xử lý lỗi và gợi ý tự động.</p>
+                        
+                        <input type="text" id="advancedSearchInput" placeholder="Gõ 'error' để thử lỗi API..." class="input-field mb-4">
+                        
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Stream Gõ Phím:</div>
+                        <div id="advancedSearchOuterStream" class="marble-timeline"></div>
+                        
+                        <div class="operator-box" data-label="PIPE: Xử Lý">debounceTime → distinctUntilChanged → switchMap (API call + startWith + catchError)</div>
+                        
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Kết quả tìm kiếm:</div>
+                        <div id="advancedSearchResultStream" class="marble-timeline"></div>
+                        
+                        <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Log:</div>
+                        <div id="advancedSearchLogger" class="bg-gray-50 p-4 rounded-lg min-h-[120px] font-mono text-sm"></div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        <!-- Drag and Drop -->
+                        <div class="interactive-demo">
+                            <h3 class="font-semibold text-lg mb-3">8.2. Kéo Thả Bằng RxJS</h3>
+                            <p class="mb-4">Triển khai tính năng kéo thả sử dụng các Observable để xử lý sự kiện.</p>
+                            
+                            <div style="position: relative; height: 250px; border: 1px solid #e5e7eb; padding: 10px; background: #f9f9f9; border-radius: 8px;">
+                                <div id="draggableBox" class="draggable" style="top: 20px; left: 20px;">KÉO TÔI</div>
+                            </div>
+                            
+                            <div id="dropZone">Thả vào đây!</div>
+                            
+                            <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Log:</div>
+                            <div id="dragDropLogger" class="bg-gray-50 p-4 rounded-lg min-h-[100px] font-mono text-sm"></div>
+                        </div>
+                        
+                        <!-- Polling -->
+                        <div class="interactive-demo">
+                            <h3 class="font-semibold text-lg mb-3">8.3. Lấy Dữ Liệu Định Kỳ (Polling)</h3>
+                            <p class="mb-4">Tự động lấy dữ liệu mới từ server theo chu kỳ với khả năng dừng lại.</p>
+                            
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <button id="startPollingBtn" class="btn btn-success">Bắt Đầu Poll</button>
+                                <button id="stopPollingBtn" class="btn btn-danger">Dừng Poll</button>
+                            </div>
+                            
+                            <div id="pollingStatus" class="text-sm text-gray-600 my-2">Trạng thái: Chưa chạy</div>
+                            
+                            <div class="text-sm text-gray-600 mb-2 font-medium">Dữ liệu nhận được:</div>
+                            <div id="pollingDataStream" class="marble-timeline"></div>
+                            
+                            <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Log:</div>
+                            <div id="pollingLogger" class="bg-gray-50 p-4 rounded-lg min-h-[100px] font-mono text-sm"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 9: Ultra Hardcore Examples -->
+            <section id="ultra-hardcore-examples" class="content-section">
+                <h2 class="text-2xl md:text-3xl font-semibold text-blue-700 mb-6 section-title">9. Ví Dụ Siêu Khó Nhằn</h2>
+                
+                <div class="interactive-demo">
+                    <h3 class="font-semibold text-lg mb-3">9.1. Gợi Ý Từ Nhiều Nguồn API</h3>
+                    <p class="mb-4">Gõ vào ô tìm kiếm, hệ thống sẽ gọi đồng thời nhiều API khác nhau và kết hợp kết quả.</p>
+                    
+                    <input type="text" id="multiApiSearchInput" placeholder="Gõ để tìm từ 2 nguồn..." class="input-field mb-4">
+                    
+                    <div class="text-sm text-gray-600 mb-2 font-medium">Stream Gõ Phím:</div>
+                    <div id="multiApiSearchOuterStream" class="marble-timeline"></div>
+                    
+                    <div class="operator-box" data-label="PIPE: Xử Lý">debounceTime → distinctUntilChanged → filter → switchMap (forkJoin [API1, API2])</div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <div class="text-sm text-gray-600 mb-2 font-medium">API 1 Response:</div>
+                            <div id="multiApi1ResultStream" class="marble-timeline min-h-[50px]"></div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-600 mb-2 font-medium">API 2 Response:</div>
+                            <div id="multiApi2ResultStream" class="marble-timeline min-h-[50px]"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-sm text-gray-600 mb-2 font-medium">Kết quả gộp (API1 + API2):</div>
+                    <div id="multiApiCombinedResultStream" class="marble-timeline"></div>
+                    
+                    <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Log:</div>
+                    <div id="multiApiSearchLogger" class="bg-gray-50 p-4 rounded-lg min-h-[120px] font-mono text-sm"></div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                    <!-- Sequential Tasks -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3">9.2. Chuỗi Tác Vụ Tuần Tự & Thử Lại</h3>
+                        <p class="mb-4">Thực hiện một chuỗi tác vụ tuần tự, mỗi tác vụ có thể thử lại nếu gặp lỗi.</p>
+                        
+                        <button id="startSequentialTasksBtn" class="btn btn-warning mb-4">Bắt Đầu Chuỗi Tác Vụ</button>
+                        
+                        <div class="text-sm text-gray-600 mb-2 font-medium">Tiến Trình Tác Vụ:</div>
+                        <div id="sequentialTasksProgressStream" class="marble-timeline"></div>
+                        
+                        <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Log:</div>
+                        <div id="sequentialTasksLogger" class="bg-gray-50 p-4 rounded-lg min-h-[150px] font-mono text-sm"></div>
+                    </div>
+                    
+                    <!-- Infinite Scroll -->
+                    <div class="interactive-demo">
+                        <h3 class="font-semibold text-lg mb-3">9.3. Cuộn Vô Tận (Infinite Scroll)</h3>
+                        <p class="mb-4">Tự động tải thêm dữ liệu khi người dùng cuộn đến cuối trang.</p>
+                        
+                        <div id="infiniteScrollContainer">
+                            <!-- Items will be added here -->
+                        </div>
+                        
+                        <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Log:</div>
+                        <div id="infiniteScrollLogger" class="bg-gray-50 p-4 rounded-lg min-h-[100px] font-mono text-sm"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer class="mt-12 pt-6 border-t border-gray-200 text-center text-gray-600 text-sm">
+            <p>© 2025 Học RxJS Trực Quan. Tất cả quyền được bảo lưu.</p>
+            <p class="mt-2">Được phát triển với ❤️ bởi Nguyễn Ngọc Khánh</p>
+        </footer>
+    </div>
+
+    <script>
+        const { Observable, fromEvent, of, pipe, Subject, timer, combineLatest, interval, BehaviorSubject, ReplaySubject, zip, throwError, EMPTY, merge, forkJoin, concat, defer, iif } = rxjs; 
+        const { map, filter, tap, scan, delay, switchMap, debounceTime, distinctUntilChanged, mergeMap, concatMap, take, startWith, shareReplay, catchError, finalize, retry, takeUntil, exhaustMap, toArray } = rxjs.operators; 
+
+        // Navigation
+        const navButtons = document.querySelectorAll('.nav-button');
+        const contentSections = document.querySelectorAll('.content-section');
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                const sectionId = button.dataset.section;
+                contentSections.forEach(section => {
+                    section.classList.toggle('active', section.id === sectionId);
+                });
+                document.getElementById('app-content').scrollTop = 0;
+            });
+        });
+        
+        // Helper functions
+        function addMarble(containerElement, value, isOutput = false, customDelay = 0, color = null, specialClass = null) {
+            if (!containerElement) return null;
+            const marble = document.createElement('div');
+            marble.classList.add('marble');
+            if (specialClass) marble.classList.add(specialClass);
+            if (color) { marble.style.backgroundColor = color; } 
+            else if (isOutput) { marble.style.backgroundColor = '#2ecc71';}
+            
+            let displayValue = String(value);
+            if (Array.isArray(value)) { 
+                displayValue = `[${value.map(v => String(v).length > 7 ? String(v).substring(0,5)+'..' : v).join(',')}]`; 
+            }
+            else if (typeof value === 'object' && value !== null && value.message) { 
+                displayValue = `Lỗi!`; 
+                marble.classList.add('error');
+            }
+            else if (value === 'Đang tải...' || (typeof value === 'string' && value.startsWith('LOAD P'))) { 
+                marble.classList.add('loading'); 
+            }
+            else if (value === undefined && specialClass === 'complete') { 
+                displayValue = 'Xong'; 
+            } 
+            
+            if (displayValue.length > 20 && !Array.isArray(value)) displayValue = displayValue.substring(0,17)+'..';
+            marble.textContent = displayValue; 
+            
+            const existingMarbles = containerElement.querySelectorAll('.marble').length;
+            marble.style.animationDelay = `${customDelay || (existingMarbles * 100)}ms`;
+            containerElement.appendChild(marble);
+            
+            // Trigger animation
+            setTimeout(() => marble.classList.add('visible'), 10);
+            
+            return marble; 
+        }
+        
+        function addCompletionMarble(containerElement, delay = 0) { 
+            if (!containerElement) return; 
+            addMarble(containerElement, undefined, false, delay, '#7f8c8d', 'complete'); 
+        }
+        
+        function clearStream(containerElement) { 
+            if (containerElement) containerElement.innerHTML = ''; 
+        }
+        
+        function logTo(element, message, isError = false) {
+            if (!element) return;
+            const p = document.createElement('p');
+            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 2 });
+            p.textContent = `[${timestamp}] ${message}`;
+            if (isError) p.style.color = 'red';
+            element.appendChild(p); 
+            element.scrollTop = element.scrollHeight; 
+        }
+
+        // Section 1: Intro
+        const runFirstObservableBtn = document.getElementById('runFirstObservable');
+        if(runFirstObservableBtn) {
+            runFirstObservableBtn.addEventListener('click', () => {
+                const streamEl = document.getElementById('firstObservableStream');
+                const logEl = document.getElementById('firstObserverOutput');
+                clearStream(streamEl);
+                clearStream(logEl);
+                logTo(logEl, 'Bắt đầu subscribe...');
+
+                of('A', 'B', 'C').pipe(
+                    concatMap(val => of(val).pipe(delay(300))) // Thêm delay cho trực quan
+                ).subscribe({
+                    next: val => {
+                        addMarble(streamEl, val, true);
+                        logTo(logEl, `Nhận giá trị (next): ${val}`);
+                    },
+                    complete: () => {
+                        addCompletionMarble(streamEl);
+                        logTo(logEl, 'Đã hoàn thành (complete)!');
+                    }
+                });
+            });
+        }
+
+        // Section 2: Basic Operators
+        // Map
+        document.getElementById('runMapOperator')?.addEventListener('click', () => {
+            const inputEl = document.getElementById('mapInputStream');
+            const outputEl = document.getElementById('mapOutputStream');
+            clearStream(inputEl);
+            clearStream(outputEl);
+            interval(500).pipe(
+                take(3),
+                map(i => i + 1),
+                tap(val => addMarble(inputEl, val, false)),
+                map(val => val * 10)
+            ).subscribe({
+                next: val => addMarble(outputEl, val, true),
+                complete: () => {
+                    addCompletionMarble(inputEl);
+                    addCompletionMarble(outputEl);
+                }
+            });
+        });
+
+        // Filter
+        document.getElementById('runFilterOperator')?.addEventListener('click', () => {
+            const inputEl = document.getElementById('filterInputStream');
+            const outputEl = document.getElementById('filterOutputStream');
+            clearStream(inputEl);
+            clearStream(outputEl);
+            interval(500).pipe(
+                take(5),
+                map(i => i + 1),
+                tap(val => addMarble(inputEl, val, false)),
+                filter(val => val % 2 === 0)
+            ).subscribe({
+                next: val => addMarble(outputEl, val, true),
+                complete: () => {
+                    addCompletionMarble(inputEl);
+                    addCompletionMarble(outputEl);
+                }
+            });
+        });
+
+        // Tap
+        document.getElementById('runTapOperator')?.addEventListener('click', () => {
+            const inputEl = document.getElementById('tapInputStream');
+            const outputEl = document.getElementById('tapOutputStream');
+            const loggerEl = document.getElementById('tapLoggerOutput');
+            clearStream(inputEl);
+            clearStream(outputEl);
+            clearStream(loggerEl);
+            interval(500).pipe(
+                take(3),
+                map(i => String.fromCharCode(65 + i)),
+                tap(val => {
+                    addMarble(inputEl, val, false);
+                    logTo(loggerEl, `TAP đã thấy: ${val}`);
+                })
+            ).subscribe({
+                next: val => addMarble(outputEl, val, true),
+                complete: () => {
+                    addCompletionMarble(inputEl);
+                    addCompletionMarble(outputEl);
+                }
+            });
+        });
+
+        // Scan
+        document.getElementById('runScanOperator')?.addEventListener('click', () => {
+            const inputEl = document.getElementById('scanInputStream');
+            const outputEl = document.getElementById('scanOutputStream');
+            clearStream(inputEl);
+            clearStream(outputEl);
+            interval(500).pipe(
+                take(4),
+                map(i => i + 1),
+                tap(val => addMarble(inputEl, val, false)),
+                scan((acc, curr) => acc + curr, 0)
+            ).subscribe({
+                next: val => addMarble(outputEl, val, true),
+                complete: () => {
+                    addCompletionMarble(inputEl);
+                    addCompletionMarble(outputEl);
+                }
+            });
+        });
+
+        // Section 3: Flattening Operators
+        function setupFlatteningDemo(btnId, inputStreamId, outputStreamId, operator) {
+            const runBtn = document.getElementById(btnId);
+            const inputStreamEl = document.getElementById(inputStreamId);
+            const outputStreamEl = document.getElementById(outputStreamId);
+            let outerCounter = 0;
+            const colors = ['#1abc9c', '#3498db', '#9b59b6', '#f1c40f', '#e67e22'];
+            if (!runBtn) return;
+            
+            const clicks$ = fromEvent(runBtn, 'click');
+
+            clicks$.pipe(
+                map(() => {
+                    const count = outerCounter++;
+                    const color = colors[count % colors.length];
+                    addMarble(inputStreamEl, `Click ${count}`, false, 0, color);
+                    // inner observable
+                    return interval(600).pipe(
+                        take(3),
+                        map(i => `${count}.${i}`),
+                        finalize(() => addCompletionMarble(outputStreamEl, 0))
+                    );
+                }),
+                operator() // mergeMap, switchMap etc.
+            ).subscribe(val => {
+                 const color = colors[parseInt(val.split('.')[0]) % colors.length];
+                 addMarble(outputStreamEl, val, true, 0, color);
+            });
+        }
+        setupFlatteningDemo('runMergeMap', 'mergeMapInputStream', 'mergeMapOutputStream', () => mergeMap(inner$ => inner$));
+        setupFlatteningDemo('runSwitchMap', 'switchMapInputStream', 'switchMapOutputStream', () => switchMap(inner$ => inner$));
+        setupFlatteningDemo('runConcatMap', 'concatMapInputStream', 'concatMapOutputStream', () => concatMap(inner$ => inner$));
+        setupFlatteningDemo('runExhaustMap', 'exhaustMapInputStream', 'exhaustMapOutputStream', () => exhaustMap(inner$ => inner$));
+
+        // Section 4: Combination Operators
+        // combineLatest
+        const emitACombineBtn = document.getElementById('emitSourceACombine');
+        const emitBCombineBtn = document.getElementById('emitSourceBCombine');
+        const combineSourceAEl = document.getElementById('combineSourceAStream');
+        const combineSourceBEl = document.getElementById('combineSourceBStream');
+        const combineOutputEl = document.getElementById('combineOutputStream');
+
+        if(emitACombineBtn) {
+            const sourceA$ = new Subject();
+            const sourceB$ = new Subject();
+            let countA = 0, countB = 0;
+            emitACombineBtn.onclick = () => {
+                const val = `A${++countA}`;
+                sourceA$.next(val);
+                addMarble(combineSourceAEl, val, false, 0, '#9b59b6');
+            };
+            emitBCombineBtn.onclick = () => {
+                const val = `B${++countB}`;
+                sourceB$.next(val);
+                addMarble(combineSourceBEl, val, false, 0, '#e67e22');
+            };
+
+            combineLatest([sourceA$, sourceB$]).subscribe(([valA, valB]) => {
+                addMarble(combineOutputEl, [valA, valB], true);
+            });
+        }
+
+        // forkJoin
+        document.getElementById('runForkJoin')?.addEventListener('click', () => {
+            const source1El = document.getElementById('forkJoinSource1Stream');
+            const source2El = document.getElementById('forkJoinSource2Stream');
+            const outputEl = document.getElementById('forkJoinOutputStream');
+            clearStream(source1El); clearStream(source2El); clearStream(outputEl);
+
+            const api1$ = timer(1500).pipe(map(() => 'User Data'), tap(v => addMarble(source1El, v, false, 0, '#16a085')));
+            const api2$ = timer(2500).pipe(map(() => 'User Prefs'), tap(v => addMarble(source2El, v, false, 0, '#27ae60')));
+
+            addMarble(source1El, 'loading', false, 0, null, 'loading');
+            addMarble(source2El, 'loading', false, 0, null, 'loading');
+
+            forkJoin({ api1: api1$, api2: api2$ }).subscribe(result => {
+                addMarble(outputEl, Object.values(result), true);
+            });
+        });
+
+        // Section 5: Useful Operators
+        // 5.1 Take
+        const runTakeOperatorBtn = document.getElementById('runTakeOperator');
+        const takeCountInputEl = document.getElementById('takeCountInput');
+        const takeCountDisplayEl = document.getElementById('takeCountDisplay');
+        const takeInputStreamEl = document.getElementById('takeInputStream');
+        const takeOutputStreamEl = document.getElementById('takeOutputStream');
+        const takeObserverOutputEl = document.getElementById('takeObserverOutput');
+        let takeSubscription;
+        
+        if (runTakeOperatorBtn && takeCountInputEl && takeCountDisplayEl) {
+            runTakeOperatorBtn.addEventListener('click', () => {
+                if (takeSubscription) takeSubscription.unsubscribe();
+                
+                clearStream(takeInputStreamEl); 
+                clearStream(takeOutputStreamEl); 
+                clearStream(takeObserverOutputEl);
+                
+                const count = parseInt(takeCountInputEl.value) || 3;
+                takeCountDisplayEl.textContent = count;
+                
+                logTo(takeObserverOutputEl, `Sẽ lấy ${count} giá trị.`);
+                
+                let emittedCount = 0; 
+                let inputMarbleDelay = 0;
+                
+                takeSubscription = interval(500).pipe(
+                    map(i => i + 1),
+                    tap(val => { 
+                        if (emittedCount < 5 || val <= count) { 
+                            addMarble(takeInputStreamEl, val, false, inputMarbleDelay += 100); 
+                        } 
+                        emittedCount++; 
+                    }),
+                    take(count)
+                ).subscribe({
+                    next: val => { 
+                        addMarble(takeOutputStreamEl, val, true, 0); 
+                        logTo(takeObserverOutputEl, `Take ra: ${val}`); 
+                    },
+                    complete: () => { 
+                        logTo(takeObserverOutputEl, 'Take xong!'); 
+                        addCompletionMarble(takeOutputStreamEl, 100); 
+                    },
+                    error: err => logTo(takeObserverOutputEl, `Lỗi take: ${err}`, true)
+                });
+            });
+            
+            takeCountInputEl.onchange = () => { 
+                if(takeCountDisplayEl) takeCountDisplayEl.textContent = takeCountInputEl.value; 
+            };
+        }
+        
+        // 5.2 Zip
+        const runZipOperatorBtn = document.getElementById('runZipOperator');
+        const emitSource1ZipBtn = document.getElementById('emitSource1Zip');
+        const emitSource2ZipBtn = document.getElementById('emitSource2Zip');
+        const zipSource1StreamEl = document.getElementById('zipSource1Stream');
+        const zipSource2StreamEl = document.getElementById('zipSource2Stream');
+        const zipOutputStreamEl = document.getElementById('zipOutputStream');
+        const zipLoggerOutputEl = document.getElementById('zipLoggerOutput');
+        let zipSourceA$, zipSourceB$, zipSubscription;
+        
+        if (runZipOperatorBtn && emitSource1ZipBtn && emitSource2ZipBtn) {
+            function setupZip() {
+                if (zipSubscription) zipSubscription.unsubscribe();
+                
+                clearStream(zipSource1StreamEl); 
+                clearStream(zipSource2StreamEl); 
+                clearStream(zipOutputStreamEl); 
+                clearStream(zipLoggerOutputEl);
+                
+                zipSourceA$ = new Subject(); 
+                zipSourceB$ = new Subject();
+                
+                logTo(zipLoggerOutputEl, "Zip sẵn sàng. Phát stream A (số) hoặc B (chữ).");
+                
+                zipSubscription = zip(zipSourceA$, zipSourceB$)
+                    .pipe(tap(([valA, valB]) => logTo(zipLoggerOutputEl, `Zip chuẩn bị: [${valA}, ${valB}]`)))
+                    .subscribe(([valA, valB]) => { 
+                        addMarble(zipOutputStreamEl, [valA, valB], true, 0, '#E67E22'); 
+                        logTo(zipLoggerOutputEl, `Observer Zip: [${valA}, ${valB}]`); 
+                    });
+            }
+            
+            runZipOperatorBtn.onclick = setupZip;
+            
+            let currentNumZip = 0; 
+            emitSource1ZipBtn.onclick = () => { 
+                if (!zipSourceA$) setupZip(); 
+                currentNumZip++; 
+                zipSourceA$.next(currentNumZip); 
+                addMarble(zipSource1StreamEl, currentNumZip, false, 0, '#F1C40F'); 
+                logTo(zipLoggerOutputEl, `Stream A phát: ${currentNumZip}`);
+            };
+            
+            let currentCharCodeZip = 64; 
+            emitSource2ZipBtn.onclick = () => { 
+                if (!zipSourceB$) setupZip(); 
+                currentCharCodeZip++; 
+                if (currentCharCodeZip > 90) currentCharCodeZip = 65; 
+                const char = String.fromCharCode(currentCharCodeZip); 
+                zipSourceB$.next(char); 
+                addMarble(zipSource2StreamEl, char, false, 0, '#9B59B6'); 
+                logTo(zipLoggerOutputEl, `Stream B phát: ${char}`);
+            };
+            
+            setupZip();
+        }
+        
+        // 5.3 CatchError
+        const runCatchErrorStreamBtn = document.getElementById('runCatchErrorStream');
+        const runCatchErrorStreamNoErrorBtn = document.getElementById('runCatchErrorStreamNoError');
+        const catchErrorInputStreamEl = document.getElementById('catchErrorInputStream');
+        const catchErrorOutputStreamEl = document.getElementById('catchErrorOutputStream');
+        const catchErrorObserverOutputEl = document.getElementById('catchErrorObserverOutput');
+        let catchErrorSubscriptionLocal;
+        
+        function createStreamThatMightErrorLocal(willError) { 
+            return new Observable(subscriber => {
+                let d = 0; 
+                addMarble(catchErrorInputStreamEl, 1, false, d += 0); 
+                subscriber.next(1);
+                
+                setTimeout(() => {
+                    addMarble(catchErrorInputStreamEl, 2, false, d += 200); 
+                    subscriber.next(2);
+                }, 500);
+                
+                setTimeout(() => {
+                    if (willError) { 
+                        logTo(catchErrorObserverOutputEl, "Stream gốc sắp LỖI!", true); 
+                        addMarble(catchErrorInputStreamEl, 'LỖI!', false, 0, null, 'error'); 
+                        subscriber.error(new Error('BÙM!')); 
+                    } 
+                    else { 
+                        addMarble(catchErrorInputStreamEl, 3, false, 0); 
+                        subscriber.next(3); 
+                        subscriber.complete(); 
+                    }
+                }, 1000);
+            });
+        }
+        
+        function setupCatchErrorDemoLocal(willError) {
+            if (catchErrorSubscriptionLocal) catchErrorSubscriptionLocal.unsubscribe();
+            
+            clearStream(catchErrorInputStreamEl); 
+            clearStream(catchErrorOutputStreamEl); 
+            clearStream(catchErrorObserverOutputEl);
+            
+            logTo(catchErrorObserverOutputEl, `Chạy stream ${willError ? 'SẼ LỖI' : 'KHÔNG LỖI'}.`);
+            
+            catchErrorSubscriptionLocal = createStreamThatMightErrorLocal(willError).pipe(
+                tap(val => logTo(catchErrorObserverOutputEl, `Trước catch: ${val}`)),
+                catchError((err, caught) => { 
+                    logTo(catchErrorObserverOutputEl, `CatchError bắt: ${err.message}`, true); 
+                    addMarble(catchErrorOutputStreamEl, 'FIXED!', true, 0, null, 'fallback'); 
+                    return of('Đã Fix'); 
+                }),
+                tap(val => logTo(catchErrorObserverOutputEl, `Sau catch: ${val}`))
+            ).subscribe({
+                next: val => { 
+                    addMarble(catchErrorOutputStreamEl, val, true, 0); 
+                    logTo(catchErrorObserverOutputEl, `Observer: ${val}`); 
+                },
+                error: err => { 
+                    addMarble(catchErrorOutputStreamEl, `Lỗi Cuối`, true, 0, null, 'error'); 
+                    logTo(catchErrorObserverOutputEl, `Observer dính lỗi: ${err.message}`, true); 
+                },
+                complete: () => { 
+                    logTo(catchErrorObserverOutputEl, 'Stream (sau catch) xong!'); 
+                    addCompletionMarble(catchErrorOutputStreamEl, 100); 
+                }
+            });
+        }
+        
+        if (runCatchErrorStreamBtn) runCatchErrorStreamBtn.onclick = () => setupCatchErrorDemoLocal(true);
+        if (runCatchErrorStreamNoErrorBtn) runCatchErrorStreamNoErrorBtn.onclick = () => setupCatchErrorDemoLocal(false);
+        
+        // 5.4 StartWith
+        const runStartWithBtn = document.getElementById('runStartWithOperator');
+        const startWithValuesInputEl = document.getElementById('startWithValuesInput');
+        const startWithValuesDisplayEl = document.getElementById('startWithValuesDisplay');
+        const startWithInputStreamEl = document.getElementById('startWithInputStream');
+        const startWithOutputStreamEl = document.getElementById('startWithOutputStream');
+        const startWithObserverOutputEl = document.getElementById('startWithObserverOutput');
+        
+        if (runStartWithBtn && startWithValuesInputEl && startWithValuesDisplayEl) {
+            runStartWithBtn.addEventListener('click', () => {
+                clearStream(startWithInputStreamEl); 
+                clearStream(startWithOutputStreamEl); 
+                clearStream(startWithObserverOutputEl);
+                
+                const rawValues = startWithValuesInputEl.value.split(',').map(s => s.trim()).filter(s => s !== '');
+                const startValues = rawValues.map(s => isNaN(parseFloat(s)) || s.match(/[a-zA-Z]/) ? s : parseFloat(s));
+                startWithValuesDisplayEl.textContent = startValues.join(',');
+                
+                logTo(startWithObserverOutputEl, `Chạy startWith(${startValues.join(', ')})`);
+                
+                const source$ = of(10, 20, 30).pipe(
+                    concatMap(val => of(val).pipe(delay(300))), // delay for visualization
+                    tap(val => addMarble(startWithInputStreamEl, val, false, 0, '#FFC300'))
+                );
+                
+                source$.pipe(
+                    delay(1000), 
+                    startWith(...startValues)
+                ).subscribe({
+                    next: val => { 
+                        addMarble(startWithOutputStreamEl, val, true, 0); 
+                        logTo(startWithObserverOutputEl, `Ra: ${val}`); 
+                    },
+                    complete: () => { 
+                        logTo(startWithObserverOutputEl, 'StartWith xong!'); 
+                        addCompletionMarble(startWithOutputStreamEl, 100); 
+                        addCompletionMarble(startWithInputStreamEl, 100); 
+                    }
+                });
+            });
+        }
+        
+        // Section 6: Subjects
+        // 6.1 Basic Subject
+        const runBasicSubjectBtn = document.getElementById('runBasicSubject');
+        const emitToBasicSubjectBtn = document.getElementById('emitToBasicSubject');
+        const addBasicSubjectSub2Btn = document.getElementById('addBasicSubjectSub2');
+        const basicSubjectLogEl = document.getElementById('basicSubjectLog');
+        const basicSubjectSub1OutEl = document.getElementById('basicSubjectSub1Output');
+        const basicSubjectSub2OutEl = document.getElementById('basicSubjectSub2Output');
+        let basicSubjLocal, basicSub1Local, basicSub2Local, basicCounterLocal = 0;
+        
+        if(runBasicSubjectBtn && emitToBasicSubjectBtn && addBasicSubjectSub2Btn) {
+            runBasicSubjectBtn.onclick = () => {
+                if(basicSub1Local) basicSub1Local.unsubscribe(); 
+                if(basicSub2Local) basicSub2Local.unsubscribe();
+                
+                clearStream(basicSubjectLogEl); 
+                clearStream(basicSubjectSub1OutEl); 
+                clearStream(basicSubjectSub2OutEl);
+                
+                basicCounterLocal = 0; 
+                basicSubjLocal = new Subject();
+                
+                logTo(basicSubjectLogEl, "Tạo Subject. Sub1 đăng ký.");
+                
+                basicSub1Local = basicSubjLocal.subscribe(val => { 
+                    addMarble(basicSubjectSub1OutEl, val, false, 0, '#9b59b6'); 
+                    logTo(basicSubjectLogEl, `Sub1 nhận: ${val}`); 
+                });
+            };
+            
+            emitToBasicSubjectBtn.onclick = () => { 
+                if(!basicSubjLocal) {
+                    logTo(basicSubjectLogEl, "Tạo Subject trước!", true); 
+                    return; 
+                } 
+                basicCounterLocal++; 
+                logTo(basicSubjectLogEl, `Subject phát: ${basicCounterLocal}`); 
+                basicSubjLocal.next(basicCounterLocal); 
+            };
+            
+            addBasicSubjectSub2Btn.onclick = () => { 
+                if(!basicSubjLocal) { 
+                    logTo(basicSubjectLogEl, "Tạo Subject trước!", true); 
+                    return; 
+                } 
+                if(basicSub2Local && !basicSub2Local.closed) {
+                     logTo(basicSubjectLogEl, "Sub2 đã đăng ký rồi.");
+                     return;
+                }
+                logTo(basicSubjectLogEl, "Sub2 đăng ký."); 
+                basicSub2Local = basicSubjLocal.subscribe(val => { 
+                    addMarble(basicSubjectSub2OutEl, val, false, 0, '#e67e22'); 
+                    logTo(basicSubjectLogEl, `Sub2 nhận: ${val}`); 
+                }); 
+            };
+        }
+        
+        // 6.2 BehaviorSubject
+        const runBehaviorSubjectBtn = document.getElementById('runBehaviorSubject');
+        const emitToBehaviorSubjectBtn = document.getElementById('emitToBehaviorSubject');
+        const addBehaviorSubjectSub2Btn = document.getElementById('addBehaviorSubjectSub2');
+        const behaviorSubjectLogEl = document.getElementById('behaviorSubjectLog');
+        const behaviorSubjectSub1OutEl = document.getElementById('behaviorSubjectSub1Output');
+        const behaviorSubjectSub2OutEl = document.getElementById('behaviorSubjectSub2Output');
+        let behaviorSubjLocal, behaviorSub1Local, behaviorSub2Local, behaviorCounterLocal = 0; 
+        const initialBehaviorValLocal = 'Hiếu';
+        
+        if(runBehaviorSubjectBtn && emitToBehaviorSubjectBtn && addBehaviorSubjectSub2Btn) {
+            runBehaviorSubjectBtn.onclick = () => {
+                if(behaviorSub1Local) behaviorSub1Local.unsubscribe(); 
+                if(behaviorSub2Local) behaviorSub2Local.unsubscribe();
+                
+                clearStream(behaviorSubjectLogEl); 
+                clearStream(behaviorSubjectSub1OutEl); 
+                clearStream(behaviorSubjectSub2OutEl);
+                
+                behaviorCounterLocal = 0; 
+                behaviorSubjLocal = new BehaviorSubject(initialBehaviorValLocal);
+                
+                logTo(behaviorSubjectLogEl, `Tạo BehaviorSubject('${initialBehaviorValLocal}'). Sub1 đăng ký.`);
+                
+                behaviorSub1Local = behaviorSubjLocal.subscribe(val => { 
+                    addMarble(behaviorSubjectSub1OutEl, val, false, 0, '#9b59b6'); 
+                    logTo(behaviorSubjectLogEl, `Sub1 nhận: ${val}`); 
+                });
+            };
+            
+            emitToBehaviorSubjectBtn.onclick = () => { 
+                if(!behaviorSubjLocal) {
+                    logTo(behaviorSubjectLogEl, "Tạo BehaviorSubject trước!", true); 
+                    return; 
+                } 
+                behaviorCounterLocal++; 
+                const newVal = `Value ${behaviorCounterLocal}`; 
+                logTo(behaviorSubjectLogEl, `BehaviorSubject phát: ${newVal}`); 
+                behaviorSubjLocal.next(newVal); 
+            };
+            
+            addBehaviorSubjectSub2Btn.onclick = () => { 
+                if(!behaviorSubjLocal) { 
+                    logTo(behaviorSubjectLogEl, "Tạo BehaviorSubject trước!", true); 
+                    return; 
+                } 
+                if(behaviorSub2Local && !behaviorSub2Local.closed) {
+                     logTo(behaviorSubjectLogEl, "Sub2 đã đăng ký rồi.");
+                     return;
+                }
+                logTo(behaviorSubjectLogEl, "Sub2 đăng ký."); 
+                behaviorSub2Local = behaviorSubjLocal.subscribe(val => { 
+                    addMarble(behaviorSubjectSub2OutEl, val, false, 0, '#e67e22'); 
+                    logTo(behaviorSubjectLogEl, `Sub2 nhận: ${val}`); 
+                }); 
+            };
+        }
+        
+        // 6.3 ReplaySubject
+        const runReplaySubjectBtn = document.getElementById('runReplaySubject');
+        const emitToReplaySubjectBtn = document.getElementById('emitToReplaySubject');
+        const addReplaySubjectSub2Btn = document.getElementById('addReplaySubjectSub2');
+        const replaySubjectLogEl = document.getElementById('replaySubjectLog');
+        const replaySubjectSub1OutEl = document.getElementById('replaySubjectSub1Output');
+        const replaySubjectSub2OutEl = document.getElementById('replaySubjectSub2Output');
+        let replaySubjLocal, replaySub1Local, replaySub2Local, replayCounterLocal = 0; 
+        const replayBufferSizeLocal = 2;
+        
+        if(runReplaySubjectBtn && emitToReplaySubjectBtn && addReplaySubjectSub2Btn) {
+            runReplaySubjectBtn.onclick = () => {
+                if(replaySub1Local) replaySub1Local.unsubscribe(); 
+                if(replaySub2Local) replaySub2Local.unsubscribe();
+                
+                clearStream(replaySubjectLogEl); 
+                clearStream(replaySubjectSub1OutEl); 
+                clearStream(replaySubjectSub2OutEl);
+                
+                replayCounterLocal = 0; 
+                replaySubjLocal = new ReplaySubject(replayBufferSizeLocal);
+                
+                logTo(replaySubjectLogEl, `Tạo ReplaySubject(${replayBufferSizeLocal}). Sub1 đăng ký.`);
+                
+                replaySub1Local = replaySubjLocal.subscribe(val => { 
+                    addMarble(replaySubjectSub1OutEl, val, false, 0, '#9b59b6'); 
+                    logTo(replaySubjectLogEl, `Sub1 nhận: ${val}`); 
+                });
+            };
+            
+            emitToReplaySubjectBtn.onclick = () => { 
+                if(!replaySubjLocal) {
+                    logTo(replaySubjectLogEl, "Tạo ReplaySubject trước!", true); 
+                    return; 
+                } 
+                replayCounterLocal++; 
+                logTo(replaySubjectLogEl, `ReplaySubject phát: ${replayCounterLocal}`); 
+                replaySubjLocal.next(replayCounterLocal); 
+            };
+            
+            addReplaySubjectSub2Btn.onclick = () => { 
+                if(!replaySubjLocal) { 
+                    logTo(replaySubjectLogEl, "Tạo ReplaySubject trước!", true); 
+                    return; 
+                } 
+                if(replaySub2Local && !replaySub2Local.closed) {
+                    logTo(replaySubjectLogEl, "Sub2 đã đăng ký rồi.");
+                    return;
+                }
+                logTo(replaySubjectLogEl, `Sub2 đăng ký (sẽ nhận ${replayBufferSizeLocal} giá trị đã replay).`); 
+                replaySub2Local = replaySubjLocal.subscribe(val => { 
+                    addMarble(replaySubjectSub2OutEl, val, false, 0, '#e67e22'); 
+                    logTo(replaySubjectLogEl, `Sub2 nhận: ${val}`); 
+                }); 
+            };
+        }
+
+        // Section 7: Real world examples
+        // Typeahead
+        const typeaheadInputEl = document.getElementById('typeaheadInput');
+        if (typeaheadInputEl) {
+            const inputStreamEl = document.getElementById('typeaheadInputStream');
+            const resultEl = document.getElementById('typeaheadResult');
+            const fakeApiSearch = (term) => timer(500).pipe(map(() => `Kết quả cho '${term}'`));
+            
+            fromEvent(typeaheadInputEl, 'input').pipe(
+                map(event => event.target.value),
+                tap(term => addMarble(inputStreamEl, term || 'trống', false)),
+                debounceTime(400),
+                distinctUntilChanged(),
+                tap(() => resultEl.innerHTML = 'Đang tìm kiếm...'),
+                switchMap(term => term ? fakeApiSearch(term) : of('Gõ để tìm kiếm'))
+            ).subscribe(result => {
+                resultEl.textContent = result;
+            });
+        }
+        
+        // Progress Bar
+        const startProgressBarBtn = document.getElementById('startProgressBar');
+        if (startProgressBarBtn) {
+            const progressFillEl = document.getElementById('progressFill');
+            const progressStatusEl = document.getElementById('progressStatus');
+            
+            fromEvent(startProgressBarBtn, 'click').pipe(
+                switchMap(() => {
+                    startProgressBarBtn.disabled = true;
+                    progressStatusEl.textContent = "Đang tải...";
+                    return interval(40).pipe(
+                        take(101),
+                        finalize(() => {
+                            startProgressBarBtn.disabled = false;
+                            progressStatusEl.textContent = 'Hoàn thành!';
+                        })
+                    );
+                })
+            ).subscribe(percentage => {
+                progressFillEl.style.width = `${percentage}%`;
+                if(percentage < 100) {
+                   progressStatusEl.textContent = `Đang tải... ${percentage}%`;
+                }
+            });
+        }
+
+        
+        // Section 8: Hardcore Examples
+        // 8.1 Advanced Type Ahead
+        const advancedSearchInputEl = document.getElementById('advancedSearchInput');
+        const advancedSearchOuterStreamEl = document.getElementById('advancedSearchOuterStream');
+        const advancedSearchResultStreamEl = document.getElementById('advancedSearchResultStream');
+        const advancedSearchLoggerEl = document.getElementById('advancedSearchLogger');
+        
+        if (advancedSearchInputEl && advancedSearchOuterStreamEl && advancedSearchResultStreamEl && advancedSearchLoggerEl) {
+            function fakeApiCallAdv(query) {
+                logTo(advancedSearchLoggerEl, `API Adv: Gọi cho "${query}"`);
+                return timer(1000).pipe(
+                    map(() => { 
+                        if (query.toLowerCase() === 'error') { 
+                            logTo(advancedSearchLoggerEl, `API Adv: Lỗi cho "${query}"!`, true); 
+                            throw new Error('API cố tình lỗi!'); 
+                        } 
+                        logTo(advancedSearchLoggerEl, `API Adv: Kết quả cho "${query}"`); 
+                        return `Kết quả cho '${query}'`; 
+                    })
+                );
+            }
+            
+            fromEvent(advancedSearchInputEl, 'input').pipe(
+                map(event => event.target.value),
+                tap(query => { 
+                    clearStream(advancedSearchOuterStreamEl); 
+                    addMarble(advancedSearchOuterStreamEl, query || "trống", false, 0, '#bdc3c7'); 
+                }),
+                debounceTime(500), 
+                distinctUntilChanged(),
+                tap(query => logTo(advancedSearchLoggerEl, `Debounced: "${query}"`)),
+                switchMap(query => {
+                    if (!query.trim()) { 
+                        clearStream(advancedSearchResultStreamEl); 
+                        addMarble(advancedSearchResultStreamEl, 'Gõ đi', true, 0, '#7f8c8d'); 
+                        return EMPTY; 
+                    }
+                    return fakeApiCallAdv(query).pipe(
+                        startWith('Đang tải...'), 
+                        catchError(err => { 
+                            logTo(advancedSearchLoggerEl, `API Lỗi: ${err.message}`, true); 
+                            return of(`Lỗi: ${err.message.substring(0,30)}`); 
+                        })
+                    );
+                })
+            ).subscribe(result => {
+                clearStream(advancedSearchResultStreamEl); 
+                const isError = typeof result === 'string' && result.startsWith('Lỗi:');
+                const isLoading = result === 'Đang tải...';
+                let marbleClass = null; 
+                if (isError) marbleClass = 'error'; 
+                if (isLoading) marbleClass = 'loading';
+                addMarble(advancedSearchResultStreamEl, result, true, 0, null, marbleClass); 
+                logTo(advancedSearchLoggerEl, `Hiển thị: ${result}`);
+            });
+        }
+        
+        // 8.2 Drag and Drop
+        const draggableBoxEl = document.getElementById('draggableBox');
+        const dropZoneEl = document.getElementById('dropZone');
+        const dragDropLoggerEl = document.getElementById('dragDropLogger');
+        
+        if (draggableBoxEl && dropZoneEl && dragDropLoggerEl) {
+            const mouseDown$ = fromEvent(draggableBoxEl, 'mousedown');
+            const mouseMove$ = fromEvent(document, 'mousemove');
+            const mouseUp$ = fromEvent(document, 'mouseup');
+            
+            mouseDown$.pipe(
+                tap(e => {
+                    e.preventDefault();
+                    draggableBoxEl.classList.add('dragging');
+                    logTo(dragDropLoggerEl, 'Bắt đầu kéo...');
+                }),
+                exhaustMap(downEvent => {
+                    const startX = draggableBoxEl.offsetLeft;
+                    const startY = draggableBoxEl.offsetTop;
+                    const mouseStartX = downEvent.clientX;
+                    const mouseStartY = downEvent.clientY;
+                    
+                    return mouseMove$.pipe(
+                        map(moveEvent => {
+                            moveEvent.preventDefault();
+                            return {
+                                x: startX + (moveEvent.clientX - mouseStartX),
+                                y: startY + (moveEvent.clientY - mouseStartY)
+                            };
+                        }),
+                        takeUntil(mouseUp$.pipe(tap(() => {
+                            draggableBoxEl.classList.remove('dragging');
+                            logTo(dragDropLoggerEl, 'Kết thúc kéo!');
+                            
+                            const rB = draggableBoxEl.getBoundingClientRect();
+                            const rZ = dropZoneEl.getBoundingClientRect();
+                            
+                            const isOver = !(rB.right < rZ.left || rB.left > rZ.right || rB.bottom < rZ.top || rB.top > rZ.bottom);
+                            dropZoneEl.textContent = isOver ? 'Đã thả vào!' : 'Thả vào đây!';
+                            dropZoneEl.classList.toggle('over', isOver);
+                            
+                            if(isOver) logTo(dragDropLoggerEl, 'Thả thành công!');
+                        })))
+                    );
+                })
+            ).subscribe(pos => {
+                draggableBoxEl.style.left = `${pos.x}px`;
+                draggableBoxEl.style.top = `${pos.y}px`;
+            });
+            
+            mouseMove$.pipe(
+                filter(() => draggableBoxEl.classList.contains('dragging')),
+                map(mE => {
+                    const rZ = dropZoneEl.getBoundingClientRect();
+                    return mE.clientX >= rZ.left && mE.clientX <= rZ.right && 
+                           mE.clientY >= rZ.top && mE.clientY <= rZ.bottom;
+                }),
+                distinctUntilChanged()
+            ).subscribe(isOver => {
+                if(draggableBoxEl.classList.contains('dragging')) {
+                    dropZoneEl.classList.toggle('over', isOver);
+                    dropZoneEl.textContent = isOver ? 'OK, thả đây!' : 'Thả vào đây!';
+                }
+            });
+        }
+        
+        // 8.3 Polling
+        const startPollingBtnEl = document.getElementById('startPollingBtn');
+        const stopPollingBtnEl = document.getElementById('stopPollingBtn');
+        const pollingStatusEl = document.getElementById('pollingStatus');
+        const pollingDataStreamEl = document.getElementById('pollingDataStream');
+        const pollingLoggerEl = document.getElementById('pollingLogger');
+        
+        if (startPollingBtnEl && stopPollingBtnEl && pollingStatusEl && pollingDataStreamEl && pollingLoggerEl) {
+            const startPoll$ = fromEvent(startPollingBtnEl, 'click').pipe(
+                tap(() => logTo(pollingLoggerEl, "Yêu cầu START poll."))
+            );
+            
+            const stopSignalForPolling$ = fromEvent(stopPollingBtnEl, 'click').pipe(
+                tap(() => logTo(pollingLoggerEl, "Yêu cầu STOP poll."))
+            );
+            
+            function fetchDataPollLocal() { 
+                logTo(pollingLoggerEl, "API Poll: Gọi..."); 
+                return timer(Math.random() * 700 + 300).pipe(
+                    map(() => `Data lúc ${new Date().toLocaleTimeString()}`), 
+                    tap(d => logTo(pollingLoggerEl, `API Poll: Nhận "${d}"`))
+                ); 
+            }
+            
+            startPoll$.pipe(
+                tap(() => { 
+                    if (pollingStatusEl) pollingStatusEl.textContent = "Trạng thái: Đang chạy..."; 
+                    clearStream(pollingDataStreamEl); 
+                }),
+                switchMap(() => timer(0, 3000).pipe(
+                    tap(() => logTo(pollingLoggerEl, '--- Timer poll phát ---')),
+                    switchMap(() => fetchDataPollLocal()),
+                    takeUntil(stopSignalForPolling$.pipe(tap(() => { 
+                        if (pollingStatusEl) pollingStatusEl.textContent = "Trạng thái: Đã dừng"; 
+                    })))
+                ))
+            ).subscribe(
+                data => { 
+                    addMarble(pollingDataStreamEl, data, true, 0, '#27ae60'); 
+                    logTo(pollingLoggerEl, `Observer Poll: ${data}`); 
+                },
+                err => { 
+                    logTo(pollingLoggerEl, `Lỗi Polling: ${err}`, true); 
+                    if (pollingStatusEl) pollingStatusEl.textContent = "Trạng thái: Lỗi!"; 
+                },
+                () => { 
+                    logTo(pollingLoggerEl, "Polling stream complete (bất thường?)."); 
+                    if (pollingStatusEl) pollingStatusEl.textContent = "Trạng thái: Hoàn thành?"; 
+                }
+            );
+        }
+        
+        // Section 9: Ultra Hardcore Examples
+        // 9.1 Multi-API Search
+        const multiApiSearchInputEl = document.getElementById('multiApiSearchInput');
+        const multiApiSearchOuterStreamEl = document.getElementById('multiApiSearchOuterStream');
+        const multiApi1ResultStreamEl = document.getElementById('multiApi1ResultStream');
+        const multiApi2ResultStreamEl = document.getElementById('multiApi2ResultStream');
+        const multiApiCombinedResultStreamEl = document.getElementById('multiApiCombinedResultStream');
+        const multiApiSearchLoggerEl = document.getElementById('multiApiSearchLogger');
+        
+        if (multiApiSearchInputEl) {
+            function fakeApiMulti1(query) { 
+                logTo(multiApiSearchLoggerEl, `API-1: Gọi cho "${query}"`); 
+                return timer(600 + Math.random()*400).pipe(
+                    map(() => [`API1:${query}-A`, `API1:${query}-B`]), 
+                    tap(r => logTo(multiApiSearchLoggerEl, `API-1: KQ cho "${query}": ${r.join()}`))
+                ); 
+            }
+            
+            function fakeApiMulti2(query) { 
+                logTo(multiApiSearchLoggerEl, `API-2: Gọi cho "${query}"`); 
+                return timer(1000 + Math.random()*500).pipe(
+                    map(() => [`API2:${query}-X`, `API2:${query}-Y`]), 
+                    tap(r => logTo(multiApiSearchLoggerEl, `API-2: KQ cho "${query}": ${r.join()}`))
+                ); 
+            }
+            
+            fromEvent(multiApiSearchInputEl, 'input').pipe(
+                map(event => event.target.value),
+                tap(query => { 
+                    clearStream(multiApiSearchOuterStreamEl); 
+                    addMarble(multiApiSearchOuterStreamEl, query || "trống", false, 0); 
+                }),
+                debounceTime(700),
+                distinctUntilChanged(),
+                filter(query => query.length > 1),
+                tap(query => {
+                    logTo(multiApiSearchLoggerEl, `Tìm kiếm cho: "${query}"`);
+                    clearStream(multiApi1ResultStreamEl); 
+                    clearStream(multiApi2ResultStreamEl); 
+                    clearStream(multiApiCombinedResultStreamEl);
+                    addMarble(multiApiCombinedResultStreamEl, 'Đang tải...', false, 0, null, 'loading');
+                }),
+                switchMap(query => 
+                    forkJoin([
+                        fakeApiMulti1(query).pipe(
+                            tap(res => { 
+                                clearStream(multiApi1ResultStreamEl); 
+                                res.forEach(r => addMarble(multiApi1ResultStreamEl, r, false, 0, null, 'api1')); 
+                            })
+                        ),
+                        fakeApiMulti2(query).pipe(
+                            tap(res => { 
+                                clearStream(multiApi2ResultStreamEl); 
+                                res.forEach(r => addMarble(multiApi2ResultStreamEl, r, false, 0, null, 'api2')); 
+                            })
+                        )
+                    ]).pipe(
+                        map(([resultsApi1, resultsApi2]) => [...resultsApi1, ...resultsApi2]),
+                        catchError(err => {
+                            logTo(multiApiSearchLoggerEl, `Lỗi forkJoin: ${err}`, true);
+                            return of(['Lỗi khi gộp API']);
+                        })
+                    )
+                )
+            ).subscribe(results => {
+                clearStream(multiApiCombinedResultStreamEl);
+                if (Array.isArray(results)) {
+                    results.forEach(r => addMarble(multiApiCombinedResultStreamEl, r, true, 0));
+                } else {
+                    addMarble(multiApiCombinedResultStreamEl, results, true, 0);
+                }
+                logTo(multiApiSearchLoggerEl, `Kết quả gộp hiển thị: ${results.join ? results.join(', ') : results}`);
+            });
+        }
+
+        // 9.2 Sequential Tasks with Retry
+        const startSequentialTasksBtn = document.getElementById('startSequentialTasksBtn');
+        const sequentialTasksProgressEl = document.getElementById('sequentialTasksProgressStream');
+        const sequentialTasksLoggerEl = document.getElementById('sequentialTasksLogger');
+
+        if(startSequentialTasksBtn) {
+            let task2Attempt = 0;
+            const task1$ = of('1. Xác thực User').pipe(
+                delay(800),
+                tap(msg => {
+                    logTo(sequentialTasksLoggerEl, `Hoàn thành: ${msg}`);
+                    addMarble(sequentialTasksProgressEl, `✅ User`, true, 0, '#2ecc71');
+                })
+            );
+
+            const task2_fetchData$ = defer(() => {
+                task2Attempt++;
+                const msg = `2. Lấy dữ liệu (lần ${task2Attempt})`;
+                logTo(sequentialTasksLoggerEl, msg);
+                addMarble(sequentialTasksProgressEl, `API #${task2Attempt}`, false, 0, '#f1c40f');
+                if (task2Attempt <= 1) {
+                    return timer(1000).pipe(mergeMap(() => throwError(() => new Error('Mạng yếu'))));
+                }
+                return timer(1000).pipe(map(() => '2. Lấy dữ liệu thành công'));
+            }).pipe(
+                retry(1),
+                tap(msg => {
+                    logTo(sequentialTasksLoggerEl, `Hoàn thành: ${msg}`);
+                    addMarble(sequentialTasksProgressEl, `✅ Data`, true, 0, '#2ecc71');
+                }),
+                catchError(err => {
+                    logTo(sequentialTasksLoggerEl, `Lỗi cuối cùng: ${err.message}`, true);
+                    addMarble(sequentialTasksProgressEl, '❌ Data', true, 0, null, 'error');
+                    return of('Lỗi không thể lấy dữ liệu');
+                })
+            );
+
+            const task3$ = of('3. Hiển thị UI').pipe(
+                delay(600),
+                tap(msg => {
+                    logTo(sequentialTasksLoggerEl, `Hoàn thành: ${msg}`);
+                    addMarble(sequentialTasksProgressEl, `✅ UI`, true, 0, '#2ecc71');
+                })
+            );
+
+            fromEvent(startSequentialTasksBtn, 'click').pipe(
+                tap(() => {
+                    task2Attempt = 0;
+                    clearStream(sequentialTasksProgressEl);
+                    clearStream(sequentialTasksLoggerEl);
+                    logTo(sequentialTasksLoggerEl, '--- Bắt đầu chuỗi tác vụ ---');
+                    startSequentialTasksBtn.disabled = true;
+                }),
+                exhaustMap(() => concat(task1$, task2_fetchData$, task3$).pipe(
+                    toArray(), // Chờ tất cả hoàn thành
+                    finalize(() => {
+                        logTo(sequentialTasksLoggerEl, '--- Chuỗi tác vụ kết thúc ---');
+                        addCompletionMarble(sequentialTasksProgressEl, 100);
+                        startSequentialTasksBtn.disabled = false;
+                    })
+                ))
+            ).subscribe();
+        }
+        
+        // 9.3 Infinite Scroll
+        const infiniteScrollContainerEl = document.getElementById('infiniteScrollContainer');
+        const infiniteScrollLoggerEl = document.getElementById('infiniteScrollLogger');
+        
+        if (infiniteScrollContainerEl) {
+            let currentPage = 0;
+            let loadingMore = false;
+            
+            function fetchItemsForScroll(pageNum) {
+                logTo(infiniteScrollLoggerEl, `API: Đang tải trang ${pageNum}...`);
+                loadingMore = true;
+                
+                const loadingDiv = document.createElement('div');
+                loadingDiv.className = 'loading-more';
+                loadingDiv.textContent = 'Đang tải thêm...';
+                infiniteScrollContainerEl.appendChild(loadingDiv);
+                
+                return timer(1000 + Math.random() * 500).pipe(
+                    map(() => Array.from({length: 7}, (_, i) => `Item ${pageNum * 7 + i + 1}`)),
+                    tap(() => {
+                        loadingMore = false;
+                        loadingDiv.remove();
+                        logTo(infiniteScrollLoggerEl, `API: Tải xong trang ${pageNum}.`);
+                    }),
+                    catchError(err => {
+                        loadingMore = false;
+                        loadingDiv.remove();
+                        logTo(infiniteScrollLoggerEl, `API: Lỗi tải trang ${pageNum}: ${err.message}`, true);
+                        return of([]);
+                    })
+                );
+            }
+            
+            // Initial load
+            fetchItemsForScroll(currentPage).subscribe(items => {
+                items.forEach(itemText => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'item';
+                    itemDiv.textContent = itemText;
+                    infiniteScrollContainerEl.appendChild(itemDiv);
+                });
+            });
+            
+            fromEvent(infiniteScrollContainerEl, 'scroll').pipe(
+                filter(() => !loadingMore),
+                map(() => {
+                    return infiniteScrollContainerEl.scrollTop + infiniteScrollContainerEl.clientHeight >= 
+                           infiniteScrollContainerEl.scrollHeight - 100;
+                }),
+                filter(isNearBottom => isNearBottom),
+                debounceTime(200),
+                exhaustMap(() => {
+                    currentPage++;
+                    logTo(infiniteScrollLoggerEl, `Cuộn gần cuối! Tải trang ${currentPage}.`);
+                    return fetchItemsForScroll(currentPage);
+                })
+            ).subscribe(newItems => {
+                if (newItems && newItems.length > 0) {
+                    newItems.forEach(itemText => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'item';
+                        itemDiv.textContent = itemText;
+                        infiniteScrollContainerEl.appendChild(itemDiv);
+                    });
+                    logTo(infiniteScrollLoggerEl, `Đã thêm ${newItems.length} items mới. Tổng: ${infiniteScrollContainerEl.querySelectorAll('.item').length}`);
+                } else if (newItems) {
+                    logTo(infiniteScrollLoggerEl, `Không có items mới để thêm (trang ${currentPage}).`);
+                }
+            });
+        }
+        
+        // Initialize first section
+        document.addEventListener('DOMContentLoaded', () => {
+            const firstNavButton = document.querySelector('.nav-button[data-section="intro"]');
+            if(firstNavButton) firstNavButton.click();
+        });
+    </script>
+</body>
+</html>
