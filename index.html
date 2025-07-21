@@ -578,6 +578,15 @@
             }
         }
     </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "react/": "https://esm.sh/react@^19.1.0/"
+  }
+}
+</script>
 </head>
 <body class="p-4 md:p-8">
     <div id="scroll-progress-bar"></div>
@@ -1216,7 +1225,7 @@
                             <button id="resetBehaviorSubject" class="btn btn-danger btn-sm">Reset</button>
                         </div>
                         
-                        <div class="subject-box" data-label="BEHAVIOR_SUBJECT">BEHAVIOR_SUBJECT (khởi tạo với 'Hiếu')</div>
+                        <div class="subject-box" data-label="BEHAVIOR_SUBJECT">BEHAVIOR_SUBJECT (khởi tạo với 'Khánh')</div>
                         
                         <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Log BehaviorSubject:</div>
                         <div id="behaviorSubjectLog" class="log-box"></div>
@@ -1753,11 +1762,11 @@ const sub2 = subject.subscribe(val => console.log(\`Sub2 nhận: \${val}\`));
 
 subject.next(3); // Sub1 nhận: 3, Sub2 nhận: 3`,
                 behaviorSubject: `const { BehaviorSubject } = rxjs;
-// Khởi tạo với giá trị ban đầu là 'Hiếu'
-const subject = new BehaviorSubject('Hiếu');
+// Khởi tạo với giá trị ban đầu là 'Khánh'
+const subject = new BehaviorSubject('Khánh');
 
 const sub1 = subject.subscribe(val => console.log(\`Sub1 nhận: \${val}\`));
-// Output ngay lập tức: Sub1 nhận: Hiếu
+// Output ngay lập tức: Sub1 nhận: Khánh
 
 subject.next('Đẹp'); // Sub1 nhận: Đẹp
 subject.next('Trai'); // Sub1 nhận: Trai
@@ -2218,7 +2227,7 @@ loadMore$.pipe(
 
 
             // --- Section 2: Basic Operators ---
-            function setupBasicOperatorDemo(key, runBtnId, resetBtnId, inStreamId, outStreamId, logId, source$, operatorPipe) {
+            function setupBasicOperatorDemo(key, runBtnId, resetBtnId, inStreamId, outStreamId, logId, source$, operatorsFn) {
                 const runBtn = document.getElementById(runBtnId);
                 const resetBtn = document.getElementById(resetBtnId);
                 const inEl = document.getElementById(inStreamId);
@@ -2233,7 +2242,7 @@ loadMore$.pipe(
                 function run() {
                     reset();
                     logTo(logEl, 'Bắt đầu luồng...');
-                    const sub = source$.pipe(operatorPipe(logEl)).subscribe({
+                    const sub = source$.pipe(...operatorsFn(logEl)).subscribe({
                         next: val => addMarble(outEl, val, true),
                         complete: () => {
                             addCompletionMarble(inEl, 100);
@@ -2249,39 +2258,39 @@ loadMore$.pipe(
             
             setupBasicOperatorDemo('map', 'runMapOperator', 'resetMapOperator', 'mapInputStream', 'mapOutputStream', 'mapLoggerOutput', 
                 interval(500).pipe(take(3), map(i => i + 1)),
-                (logEl) => pipe(
+                (logEl) => [
                     tap(val => { addMarble(document.getElementById('mapInputStream'), val, false); logTo(logEl, `Input: ${val}`); }),
                     map(val => val * 10),
                     tap(val => logTo(logEl, `Output: ${val}`))
-                )
+                ]
             );
             
             setupBasicOperatorDemo('filter', 'runFilterOperator', 'resetFilterOperator', 'filterInputStream', 'filterOutputStream', 'filterLoggerOutput', 
                 interval(500).pipe(take(5), map(i => i + 1)),
-                (logEl) => pipe(
+                (logEl) => [
                     tap(val => { addMarble(document.getElementById('filterInputStream'), val, false); logTo(logEl, `Input: ${val}`); }),
                     filter(val => val % 2 === 0),
                     tap(val => logTo(logEl, `Passed filter: ${val}`))
-                )
+                ]
             );
 
             setupBasicOperatorDemo('tap', 'runTapOperator', 'resetTapOperator', 'tapInputStream', 'tapOutputStream', 'tapLoggerOutput', 
                 interval(500).pipe(take(3), map(i => String.fromCharCode(65 + i))),
-                (logEl) => pipe(
+                (logEl) => [
                     tap(val => {
                         addMarble(document.getElementById('tapInputStream'), val, false);
                         logTo(logEl, `TAP đã thấy: ${val}`);
                     })
-                )
+                ]
             );
 
             setupBasicOperatorDemo('scan', 'runScanOperator', 'resetScanOperator', 'scanInputStream', 'scanOutputStream', 'scanLoggerOutput',
                 interval(500).pipe(take(4), map(i => i + 1)),
-                (logEl) => pipe(
+                (logEl) => [
                      tap(val => { addMarble(document.getElementById('scanInputStream'), val, false); logTo(logEl, `Input: ${val}`); }),
                      scan((acc, curr) => acc + curr, 0),
                      tap(val => logTo(logEl, `Tổng tích lũy: ${val}`))
-                )
+                ]
             );
 
             // --- Section 3: Flattening Operators ---
@@ -2295,16 +2304,11 @@ loadMore$.pipe(
                 let outerCounter = 0;
                 const colors = ['#1abc9c', '#3498db', '#9b59b6', '#f1c40f', '#e67e22'];
                 
-                function reset() {
+                function setupStream() {
                     cleanupSub(opName);
-                    clearStream(inEl, outEl, logEl);
-                    outerCounter = 0;
-                }
-                
-                function run() {
-                    reset();
                     logTo(logEl, 'Sẵn sàng lắng nghe click...');
                     const clicks$ = fromEvent(runBtn, 'click');
+
                     const sub = clicks$.pipe(
                         map(() => {
                             const count = outerCounter++;
@@ -2327,7 +2331,15 @@ loadMore$.pipe(
                     });
                     manageSub(opName, sub);
                 }
-                runBtn?.addEventListener('click', run);
+                
+                function reset() {
+                    cleanupSub(opName);
+                    clearStream(inEl, outEl, logEl);
+                    outerCounter = 0;
+                    setupStream();
+                }
+                
+                setupStream();
                 resetBtn?.addEventListener('click', reset);
             }
             
@@ -2458,11 +2470,11 @@ loadMore$.pipe(
 
             setupBasicOperatorDemo('pairwise', 'runPairwise', 'resetPairwise', 'pairwiseInputStream', 'pairwiseOutputStream', 'pairwiseLoggerOutput',
                 interval(1000).pipe(take(5)),
-                (logEl) => pipe(
+                (logEl) => [
                     tap(val => { addMarble(document.getElementById('pairwiseInputStream'), val, false); logTo(logEl, `Input: ${val}`); }),
                     pairwise(),
                     tap(val => logTo(logEl, `Output: [${val.join(',')}]`))
-                )
+                ]
             );
             
             const wlfLoggerEl = document.getElementById('wlfLoggerOutput');
@@ -2668,7 +2680,7 @@ loadMore$.pipe(
                 document.getElementById(resetBtnId)?.addEventListener('click', reset);
             }
             setupSubjectDemo('Subject', 'runBasicSubject', 'emitToBasicSubject', 'addBasicSubjectSub2', 'resetBasicSubject', 'basicSubjectLog', 'basicSubjectSub1Output', 'basicSubjectSub2Output', () => new Subject());
-            setupSubjectDemo('BehaviorSubject', 'runBehaviorSubject', 'emitToBehaviorSubject', 'addBehaviorSubjectSub2', 'resetBehaviorSubject', 'behaviorSubjectLog', 'behaviorSubjectSub1Output', 'behaviorSubjectSub2Output', () => new BehaviorSubject('Hiếu'));
+            setupSubjectDemo('BehaviorSubject', 'runBehaviorSubject', 'emitToBehaviorSubject', 'addBehaviorSubjectSub2', 'resetBehaviorSubject', 'behaviorSubjectLog', 'behaviorSubjectSub1Output', 'behaviorSubjectSub2Output', () => new BehaviorSubject('Khánh'));
             setupSubjectDemo('ReplaySubject', 'runReplaySubject', 'emitToReplaySubject', 'addReplaySubjectSub2', 'resetReplaySubject', 'replaySubjectLog', 'replaySubjectSub1Output', 'replaySubjectSub2Output', () => new ReplaySubject(2));
 
             // --- Section 8: Real world examples ---
