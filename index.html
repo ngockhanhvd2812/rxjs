@@ -364,7 +364,6 @@
             position: absolute; 
             user-select: none;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            font-weight: 600;
             text-align: center;
             transition: transform 0.2s;
         }
@@ -389,7 +388,6 @@
             margin-top: 15px; 
             color: #7f8c8d; 
             font-style: italic;
-            font-weight: 500;
             transition: all 0.3s ease;
         }
         
@@ -473,6 +471,7 @@
         .info-card h3 {
             margin-top: 0;
             color: #1e40af;
+            font-weight: normal;
         }
         
         .progress-bar {
@@ -500,7 +499,6 @@
         
         .analogy-title {
             color: #1e40af;
-            font-weight: 600;
             margin-bottom: 8px;
         }
         
@@ -619,17 +617,17 @@
         <main id="app-content">
             <!-- Section 1: Introduction -->
             <section id="intro" class="content-section active">
-                 <h2 class="text-2xl md:text-3xl font-semibold text-blue-700 mb-6 section-title">1. Chào mừng đến với RxJS</h2>
+                 <h2 class="text-2xl md:text-3xl text-blue-700 mb-6 section-title">1. Chào mừng đến với RxJS</h2>
                  <div class="info-card">
                     <h3>RxJS là gì?</h3>
                     <p>RxJS (Reactive Extensions for JavaScript) là một thư viện giúp lập trình với các luồng dữ liệu bất đồng bộ. Hãy tưởng tượng bạn đang xử lý mọi thứ, từ sự kiện click chuột, nhập liệu, đến dữ liệu từ API, như những dòng sông (streams) chảy liên tục. RxJS cung cấp cho bạn các công cụ mạnh mẽ để điều khiển, biến đổi và kết hợp những dòng sông này.</p>
                 </div>
                 <div class="analogy-box">
                     <p class="analogy-title">💡 Phép so sánh: Dây chuyền sản xuất</p>
-                    <p>Hãy xem một <strong>Observable</strong> như một dây chuyền sản xuất. Nó đưa ra các "sản phẩm thô" (dữ liệu). Các <strong>Operators</strong> (như <code>map</code>, <code>filter</code>) là các cỗ máy trên dây chuyền, mỗi máy thực hiện một công đoạn xử lý. Cuối cùng, <strong>Observer</strong> (người đăng ký) là người nhận "thành phẩm" (dữ liệu đã qua xử lý).</p>
+                    <p>Hãy xem một <span class="text-blue-700">Observable</span> như một dây chuyền sản xuất. Nó đưa ra các "sản phẩm thô" (dữ liệu). Các <span class="text-blue-700">Operators</span> (như <code>map</code>, <code>filter</code>) là các cỗ máy trên dây chuyền, mỗi máy thực hiện một công đoạn xử lý. Cuối cùng, <span class="text-blue-700">Observer</span> (người đăng ký) là người nhận "thành phẩm" (dữ liệu đã qua xử lý).</p>
                 </div>
                 <div class="interactive-demo" data-demo-id="firstObservable" data-search-terms="of, observable, cơ bản">
-                    <h3 class="font-semibold text-lg mb-3">Observable đầu tiên của bạn</h3>
+                    <h3 class="text-lg mb-3">Observable đầu tiên của bạn</h3>
                     <p class="mb-4">Đây là một Observable đơn giản nhất, sử dụng hàm <code>of</code> để tạo ra một luồng dữ liệu phát ra một vài giá trị rồi kết thúc.</p>
                     <div class="demo-controls">
                         <button id="runFirstObservable" class="btn">Chạy of('A', 'B', 'C')</button>
@@ -651,11 +649,11 @@
 
             <!-- Section 2: Basic Operators -->
             <section id="basic-operators" class="content-section">
-                <h2 class="text-2xl md:text-3xl font-semibold text-blue-700 mb-6 section-title">2. Các Operators Cơ Bản</h2>
+                <h2 class="text-2xl md:text-3xl text-blue-700 mb-6 section-title">2. Các Operators Cơ Bản</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Map -->
                     <div class="interactive-demo" data-demo-id="map" data-search-terms="map, biến đổi">
-                        <h3 class="font-semibold text-lg mb-3"><code class="text-purple-600">map(fn)</code> - Biến đổi</h3>
+                        <h3 class="text-lg mb-3"><code class="text-purple-600">map(fn)</code> - Biến đổi</h3>
                         <p class="mb-4">Biến đổi mỗi giá trị được phát ra bởi luồng nguồn. Ví dụ: nhân mỗi số với 10.</p>
                         <div class="demo-controls">
                             <button id="runMapOperator" class="btn">Chạy Map</button>
@@ -678,7 +676,7 @@
                     </div>
                     <!-- Filter -->
                     <div class="interactive-demo" data-demo-id="filter" data-search-terms="filter, lọc">
-                        <h3 class="font-semibold text-lg mb-3"><code class="text-blue-600">filter(fn)</code> - Lọc</h3>
+                        <h3 class="text-lg mb-3"><code class="text-blue-600">filter(fn)</code> - Lọc</h3>
                         <p class="mb-4">Chỉ cho phép các giá trị thỏa mãn một điều kiện đi qua. Ví dụ: chỉ lấy các số chẵn.</p>
                         <div class="demo-controls">
                             <button id="runFilterOperator" class="btn">Chạy Filter</button>
@@ -701,7 +699,7 @@
                     </div>
                      <!-- Tap -->
                     <div class="interactive-demo" data-demo-id="tap" data-search-terms="tap, side effect, log, hành động phụ">
-                        <h3 class="font-semibold text-lg mb-3"><code class="text-green-600">tap(fn)</code> - Hành động phụ</h3>
+                        <h3 class="text-lg mb-3"><code class="text-green-600">tap(fn)</code> - Hành động phụ</h3>
                         <p class="mb-4">Thực hiện một hành động phụ (ví dụ: logging) với mỗi giá trị mà không làm thay đổi luồng.</p>
                         <div class="demo-controls">
                             <button id="runTapOperator" class="btn">Chạy Tap</button>
@@ -724,7 +722,7 @@
                     </div>
                     <!-- Scan -->
                     <div class="interactive-demo" data-demo-id="scan" data-search-terms="scan, tích lũy, reduce">
-                        <h3 class="font-semibold text-lg mb-3"><code class="text-orange-600">scan(fn, seed)</code> - Tích lũy</h3>
+                        <h3 class="text-lg mb-3"><code class="text-orange-600">scan(fn, seed)</code> - Tích lũy</h3>
                         <p class="mb-4">Tích lũy giá trị theo thời gian, tương tự <code>reduce</code> của Array nhưng phát ra mỗi giá trị trung gian.</p>
                         <div class="demo-controls">
                             <button id="runScanOperator" class="btn">Chạy Scan</button>
@@ -750,12 +748,12 @@
 
             <!-- Section 3: Advanced Operators -->
             <section id="advanced-operators" class="content-section">
-                 <h2 class="text-2xl md:text-3xl font-semibold text-blue-700 mb-6 section-title">3. Operators Chuyển Đổi (Flattening)</h2>
+                 <h2 class="text-2xl md:text-3xl text-blue-700 mb-6 section-title">3. Operators Chuyển Đổi (Flattening)</h2>
                  <p class="mb-4 info-card">Các operators này xử lý "Observable của Observable" (luồng lồng trong luồng). Tình huống phổ biến là khi một sự kiện (như click) kích hoạt một tác vụ bất đồng bộ khác (như gọi API).</p>
                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- mergeMap -->
                     <div class="interactive-demo" data-demo-id="mergeMap" data-search-terms="mergeMap, flatMap, song song">
-                        <h3 class="font-semibold text-lg mb-3"><code class="text-red-600">mergeMap</code> - Hợp nhất luồng</h3>
+                        <h3 class="text-lg mb-3"><code class="text-red-600">mergeMap</code> - Hợp nhất luồng</h3>
                         <p class="mb-4">Tạo và đăng ký vào một luồng con cho mỗi giá trị từ luồng cha. Tất cả các luồng con chạy song song và kết quả được hợp nhất.</p>
                          <div class="demo-controls">
                             <button id="runMergeMap" class="btn">Click để phát luồng con</button>
@@ -779,7 +777,7 @@
                     </div>
                     <!-- switchMap -->
                     <div class="interactive-demo" data-demo-id="switchMap" data-search-terms="switchMap, hủy, chuyển, tìm kiếm">
-                        <h3 class="font-semibold text-lg mb-3"><code class="text-yellow-600">switchMap</code> - Chuyển luồng</h3>
+                        <h3 class="text-lg mb-3"><code class="text-yellow-600">switchMap</code> - Chuyển luồng</h3>
                         <p class="mb-4">Giống <code>mergeMap</code>, nhưng khi luồng cha phát giá trị mới, nó sẽ hủy luồng con trước đó và chuyển sang luồng con mới.</p>
                         <div class="demo-controls">
                             <button id="runSwitchMap" class="btn">Click để chuyển luồng</button>
@@ -803,7 +801,7 @@
                     </div>
                      <!-- concatMap -->
                     <div class="interactive-demo" data-demo-id="concatMap" data-search-terms="concatMap, nối, tuần tự, thứ tự">
-                        <h3 class="font-semibold text-lg mb-3"><code class="text-green-600">concatMap</code> - Nối luồng</h3>
+                        <h3 class="text-lg mb-3"><code class="text-green-600">concatMap</code> - Nối luồng</h3>
                         <p class="mb-4">Chạy các luồng con một cách tuần tự. Luồng con tiếp theo chỉ bắt đầu khi luồng con trước đó đã hoàn thành. Đảm bảo thứ tự.</p>
                          <div class="demo-controls">
                             <button id="runConcatMap" class="btn">Click để xếp hàng luồng</button>
@@ -827,7 +825,7 @@
                     </div>
                     <!-- exhaustMap -->
                     <div class="interactive-demo" data-demo-id="exhaustMap" data-search-terms="exhaustMap, bỏ qua, spam, lock">
-                        <h3 class="font-semibold text-lg mb-3"><code class="text-blue-600">exhaustMap</code> - Bỏ qua luồng</h3>
+                        <h3 class="text-lg mb-3"><code class="text-blue-600">exhaustMap</code> - Bỏ qua luồng</h3>
                         <p class="mb-4">Bỏ qua các giá trị mới từ luồng cha trong khi một luồng con đang hoạt động. Hữu ích để chống click-spam.</p>
                          <div class="demo-controls">
                             <button id="runExhaustMap" class="btn">Click (thử click nhanh)</button>
@@ -854,12 +852,12 @@
             
             <!-- Section 4: Combination Operators -->
             <section id="more-advanced-operators" class="content-section">
-                <h2 class="text-2xl md:text-3xl font-semibold text-blue-700 mb-6 section-title">4. Operators Kết Hợp (Combination)</h2>
+                <h2 class="text-2xl md:text-3xl text-blue-700 mb-6 section-title">4. Operators Kết Hợp (Combination)</h2>
                 <p class="mb-4 info-card">Các operators này cho phép bạn kết hợp nhiều luồng dữ liệu lại với nhau theo những cách khác nhau.</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- combineLatest -->
                     <div class="interactive-demo" data-demo-id="combineLatest" data-search-terms="combineLatest, kết hợp, form validation">
-                        <h3 class="font-semibold text-lg mb-3"><code class="text-indigo-600">combineLatest</code> - Kết hợp giá trị mới nhất</h3>
+                        <h3 class="text-lg mb-3"><code class="text-indigo-600">combineLatest</code> - Kết hợp giá trị mới nhất</h3>
                         <p class="mb-4">Khi bất kỳ luồng nào phát, nó sẽ phát ra một mảng chứa giá trị mới nhất từ TẤT CẢ các luồng. Sẽ không phát gì cho đến khi mọi luồng đã phát ít nhất một lần.</p>
                         <div class="demo-controls">
                            <button id="emitSourceACombine" class="btn btn-secondary">Phát Stream A</button>
@@ -885,7 +883,7 @@
                     </div>
                     <!-- forkJoin -->
                     <div class="interactive-demo" data-demo-id="forkJoin" data-search-terms="forkJoin, promise.all, đồng bộ, chờ">
-                        <h3 class="font-semibold text-lg mb-3"><code class="text-teal-600">forkJoin</code> - Chờ tất cả hoàn thành</h3>
+                        <h3 class="text-lg mb-3"><code class="text-teal-600">forkJoin</code> - Chờ tất cả hoàn thành</h3>
                         <p class="mb-4">Tương tự <code>Promise.all</code>. Chờ cho tất cả các luồng nguồn hoàn thành, sau đó phát ra một mảng chứa giá trị CUỐI CÙNG từ mỗi luồng.</p>
                          <div class="demo-controls">
                             <button id="runForkJoin" class="btn">Chạy 2 API song song</button>
@@ -913,13 +911,13 @@
             
             <!-- Section NEW: Utility Operators -->
             <section id="utility-operators" class="content-section">
-                <h2 class="text-2xl md:text-3xl font-semibold text-blue-700 mb-6 section-title">5. Utility Operators</h2>
+                <h2 class="text-2xl md:text-3xl text-blue-700 mb-6 section-title">5. Utility Operators</h2>
                  <p class="mb-4 info-card">Đây là tập hợp các toán tử tiện ích mạnh mẽ để điều khiển luồng dữ liệu, đặc biệt hữu ích trong việc xử lý tương tác người dùng hoặc các nguồn phát dữ liệu dày đặc.</p>
                 <div class="grid grid-cols-1 gap-6">
                     <!-- DebounceTime vs ThrottleTime -->
                     <div class="interactive-demo col-span-1" data-demo-id="rateLimit" data-search-terms="debounceTime, throttleTime, so sánh">
-                        <h3 class="font-semibold text-lg mb-3">So sánh <code class="text-purple-600">debounceTime</code> và <code class="text-blue-600">throttleTime</code></h3>
-                        <p class="mb-4">Click vào nút bên dưới thật nhanh và nhiều lần để xem sự khác biệt. <strong>Debounce</strong> chỉ phát giá trị sau khi có một khoảng lặng. <strong>Throttle</strong> phát giá trị đầu tiên, sau đó chặn trong một khoảng thời gian.</p>
+                        <h3 class="text-lg mb-3">So sánh <code class="text-purple-600">debounceTime</code> và <code class="text-blue-600">throttleTime</code></h3>
+                        <p class="mb-4">Click vào nút bên dưới thật nhanh và nhiều lần để xem sự khác biệt. <span class="text-blue-700">Debounce</span> chỉ phát giá trị sau khi có một khoảng lặng. <span class="text-blue-700">Throttle</span> phát giá trị đầu tiên, sau đó chặn trong một khoảng thời gian.</p>
                         <div class="demo-controls">
                             <button id="runRateLimit" class="btn btn-warning">CLICK VÀO TÔI!</button>
                              <button id="resetRateLimit" class="btn btn-secondary btn-sm">Reset</button>
@@ -949,7 +947,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- bufferTime -->
                         <div class="interactive-demo" data-demo-id="bufferTime" data-search-terms="bufferTime, gom, bộ đệm">
-                            <h3 class="font-semibold text-lg mb-3"><code class="text-green-600">bufferTime(2000)</code></h3>
+                            <h3 class="text-lg mb-3"><code class="text-green-600">bufferTime(2000)</code></h3>
                             <p class="mb-4">Gom các giá trị từ luồng nguồn vào một bộ đệm và phát ra bộ đệm này sau mỗi 2 giây.</p>
                             <div class="demo-controls">
                                 <button id="runBufferTime" class="btn">Click để phát giá trị</button>
@@ -972,7 +970,7 @@
                         </div>
                          <!-- pairwise -->
                         <div class="interactive-demo" data-demo-id="pairwise" data-search-terms="pairwise, cặp, trước sau">
-                            <h3 class="font-semibold text-lg mb-3"><code class="text-orange-600">pairwise()</code></h3>
+                            <h3 class="text-lg mb-3"><code class="text-orange-600">pairwise()</code></h3>
                             <p class="mb-4">Nhóm các giá trị liên tiếp thành từng cặp `[trước, sau]` và phát ra.</p>
                              <div class="demo-controls">
                                 <button id="runPairwise" class="btn">Chạy luồng số</button>
@@ -996,8 +994,8 @@
                     </div>
                      <!-- withLatestFrom -->
                     <div class="interactive-demo" data-demo-id="withLatestFrom" data-search-terms="withLatestFrom, kết hợp, giá trị cuối">
-                        <h3 class="font-semibold text-lg mb-3"><code class="text-indigo-600">withLatestFrom(other$)</code></h3>
-                        <p class="mb-4">Khi luồng chính (Clicks) phát, nó sẽ kết hợp giá trị của mình với giá trị **mới nhất** từ luồng phụ (Timer). Luồng phụ chạy ngầm.</p>
+                        <h3 class="text-lg mb-3"><code class="text-indigo-600">withLatestFrom(other$)</code></h3>
+                        <p class="mb-4">Khi luồng chính (Clicks) phát, nó sẽ kết hợp giá trị của mình với giá trị mới nhất từ luồng phụ (Timer). Luồng phụ chạy ngầm.</p>
                          <div class="demo-controls">
                             <button id="runWithLatestFrom" class="btn">Click để lấy giá trị từ Timer</button>
                              <button id="resetWithLatestFrom" class="btn btn-secondary btn-sm">Reset</button>
@@ -1031,19 +1029,19 @@
 
             <!-- Section 5: Useful Operators -->
             <section id="useful-operators" class="content-section">
-                <h2 class="text-2xl md:text-3xl font-semibold text-blue-700 mb-6 section-title">6. Operators Hữu Ích Khác</h2>
+                <h2 class="text-2xl md:text-3xl text-blue-700 mb-6 section-title">6. Operators Hữu Ích Khác</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Take -->
                     <div class="interactive-demo" data-demo-id="take" data-search-terms="take, giới hạn, lấy">
-                        <h3 class="font-semibold text-lg mb-3"><code class="text-green-600">take(count)</code> - Giới Hạn Số Lượng</h3>
+                        <h3 class="text-lg mb-3"><code class="text-green-600">take(count)</code> - Giới Hạn Số Lượng</h3>
                         <p class="mb-4">Chỉ lấy một số lượng giá trị xác định từ luồng dữ liệu.</p>
                         <div class="demo-controls">
                             <button id="runTakeOperator" class="btn mb-2">Chạy Take</button>
                              <button id="resetTakeOperator" class="btn btn-secondary btn-sm">Reset</button>
                         </div>
                         
-                        <label for="takeCountInput" class="text-sm font-medium text-gray-700 mr-2">Số lượng lấy:</label>
+                        <label for="takeCountInput" class="text-sm text-gray-700 mr-2">Số lượng lấy:</label>
                         <input type="number" id="takeCountInput" value="3" class="input-field input-field-sm w-20 mb-4">
                         
                         <div class="text-sm text-gray-600 mb-2 font-medium">Input:</div>
@@ -1066,7 +1064,7 @@
                     
                     <!-- Zip -->
                     <div class="interactive-demo" data-demo-id="zip" data-search-terms="zip, ghép cặp, đôi">
-                        <h3 class="font-semibold text-lg mb-3"><code class="text-orange-600">zip(obs1,...)</code> - Ghép Cặp</h3>
+                        <h3 class="text-lg mb-3"><code class="text-orange-600">zip(obs1,...)</code> - Ghép Cặp</h3>
                         <p class="mb-4">Ghép cặp các giá trị từ nhiều luồng theo thứ tự xuất hiện.</p>
                         
                         <div class="demo-controls">
@@ -1104,7 +1102,7 @@
                     
                     <!-- CatchError -->
                     <div class="interactive-demo" data-demo-id="catchError" data-search-terms="catchError, error, xử lý lỗi, try catch">
-                        <h3 class="font-semibold text-lg mb-3"><code class="text-red-700">catchError(fn)</code> - Xử Lý Lỗi</h3>
+                        <h3 class="text-lg mb-3"><code class="text-red-700">catchError(fn)</code> - Xử Lý Lỗi</h3>
                         <p class="mb-4">Bắt và xử lý lỗi trong luồng dữ liệu, trả về một giá trị thay thế hoặc luồng mới.</p>
                         
                         <div class="demo-controls">
@@ -1133,7 +1131,7 @@
                     
                     <!-- StartWith -->
                     <div class="interactive-demo" data-demo-id="startWith" data-search-terms="startWith, bắt đầu, giá trị khởi tạo">
-                        <h3 class="font-semibold text-lg mb-3"><code class="text-blue-500">startWith(...values)</code> - Bắt Đầu Với Giá Trị</h3>
+                        <h3 class="text-lg mb-3"><code class="text-blue-500">startWith(...values)</code> - Bắt Đầu Với Giá Trị</h3>
                         <p class="mb-4">Thêm các giá trị vào đầu luồng dữ liệu trước khi luồng chính bắt đầu phát giá trị.</p>
                         <div class="demo-controls">
                              <button id="runStartWithOperator" class="btn mb-4">Chạy StartWith</button>
@@ -1163,7 +1161,7 @@
 
             <!-- Section 6: Subjects -->
             <section id="subjects" class="content-section">
-                <h2 class="text-2xl md:text-3xl font-semibold text-blue-700 mb-6 section-title">7. Subjects - Đa Hướng Dữ Liệu</h2>
+                <h2 class="text-2xl md:text-3xl text-blue-700 mb-6 section-title">7. Subjects - Đa Hướng Dữ Liệu</h2>
                 
                 <div class="info-card">
                     <p>Subject là một dạng đặc biệt của Observable cho phép đa hướng dữ liệu - nhiều Observer có thể subscribe vào cùng một Subject. Subject cũng là một Observer, có thể nhận dữ liệu thông qua các phương thức next(), error() và complete().</p>
@@ -1172,7 +1170,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <!-- Subject -->
                     <div class="interactive-demo" data-demo-id="subject" data-search-terms="Subject, multicast, đa hướng">
-                        <h3 class="font-semibold text-lg mb-3"><code class="text-purple-700">Subject</code></h3>
+                        <h3 class="text-lg mb-3"><code class="text-purple-700">Subject</code></h3>
                         <p class="mb-4">Subject cơ bản - Observer chỉ nhận các giá trị phát ra sau khi subscribe.</p>
                         
                         <div class="demo-controls">
@@ -1208,7 +1206,7 @@
                     
                     <!-- BehaviorSubject -->
                     <div class="interactive-demo" data-demo-id="behaviorSubject" data-search-terms="BehaviorSubject, state, trạng thái">
-                        <h3 class="font-semibold text-lg mb-3"><code class="text-green-700">BehaviorSubject</code></h3>
+                        <h3 class="text-lg mb-3"><code class="text-green-700">BehaviorSubject</code></h3>
                         <p class="mb-4">Lưu trữ giá trị hiện tại và phát nó cho các subscriber mới ngay khi họ subscribe.</p>
                         
                          <div class="demo-controls">
@@ -1244,7 +1242,7 @@
                     
                     <!-- ReplaySubject -->
                     <div class="interactive-demo" data-demo-id="replaySubject" data-search-terms="ReplaySubject, cache, bộ đệm, phát lại">
-                        <h3 class="font-semibold text-lg mb-3"><code class="text-blue-700">ReplaySubject</code></h3>
+                        <h3 class="text-lg mb-3"><code class="text-blue-700">ReplaySubject</code></h3>
                         <p class="mb-4">Lưu trữ một số lượng giá trị đã phát trước đó và phát lại cho các subscriber mới.</p>
                         
                          <div class="demo-controls">
@@ -1282,11 +1280,11 @@
 
             <!-- Section 7: Real-World Examples -->
             <section id="real-world" class="content-section">
-                 <h2 class="text-2xl md:text-3xl font-semibold text-blue-700 mb-6 section-title">8. Ví Dụ Thực Tế</h2>
+                 <h2 class="text-2xl md:text-3xl text-blue-700 mb-6 section-title">8. Ví Dụ Thực Tế</h2>
                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Simple Type Ahead -->
                     <div class="interactive-demo" data-demo-id="typeahead" data-search-terms="typeahead, gợi ý tìm kiếm, search, api">
-                        <h3 class="font-semibold text-lg mb-3">8.1. Gợi ý tìm kiếm (Typeahead)</h3>
+                        <h3 class="text-lg mb-3">8.1. Gợi ý tìm kiếm (Typeahead)</h3>
                         <p class="mb-4">Một ứng dụng kinh điển của RxJS: đợi người dùng ngừng gõ, sau đó mới thực hiện tìm kiếm để tránh các request không cần thiết.</p>
                         <input type="text" id="typeaheadInput" placeholder="Gõ để tìm kiếm..." class="input-field mb-4">
                         <div class="text-sm text-gray-600 mb-2 font-medium">Stream gõ phím:</div>
@@ -1306,7 +1304,7 @@
                     </div>
                     <!-- Progress Bar -->
                     <div class="interactive-demo" data-demo-id="progressBar" data-search-terms="progress bar, thanh tiến trình, tải">
-                        <h3 class="font-semibold text-lg mb-3">8.2. Thanh tiến trình (Progress Bar)</h3>
+                        <h3 class="text-lg mb-3">8.2. Thanh tiến trình (Progress Bar)</h3>
                         <p class="mb-4">Sử dụng RxJS để điều khiển một thanh tiến trình, rất hữu ích cho việc hiển thị trạng thái tải file hoặc các tác vụ kéo dài.</p>
                         <div class="demo-controls">
                             <button id="startProgressBar" class="btn">Bắt đầu tải</button>
@@ -1315,7 +1313,7 @@
                         <div class="progress-bar mt-4">
                             <div id="progressFill" class="progress-fill"></div>
                         </div>
-                        <div id="progressStatus" class="text-center font-semibold text-blue-700 mt-2"></div>
+                        <div id="progressStatus" class="text-center text-blue-700 mt-2"></div>
                          <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Log:</div>
                         <div id="progressBarLoggerOutput" class="log-box"></div>
                         <div class="mt-4 text-right"> <button class="btn btn-secondary btn-sm toggle-code-btn">Xem Code</button> </div>
@@ -1329,27 +1327,27 @@
                 </div>
                  <!-- Real-time Form Validation -->
                  <div class="interactive-demo col-span-1 md:col-span-2" data-demo-id="formValidation" data-search-terms="form, validation, xác thực, combineLatest">
-                     <h3 class="font-semibold text-lg mb-3">8.3. Xác thực biểu mẫu (Real-time Form Validation)</h3>
+                     <h3 class="text-lg mb-3">8.3. Xác thực biểu mẫu (Real-time Form Validation)</h3>
                      <p class="mb-4">Sử dụng <code>combineLatest</code> để tổng hợp trạng thái hợp lệ của nhiều trường và chỉ cho phép gửi khi tất cả đều OK. Tên người dùng "admin" hoặc "root" sẽ bị báo là đã tồn tại (kiểm tra bất đồng bộ).</p>
                     <form id="validationForm" onsubmit="event.preventDefault()">
                         <div>
-                            <label for="usernameInput" class="font-medium">Tên người dùng</label>
+                            <label for="usernameInput">Tên người dùng</label>
                             <input type="text" id="usernameInput" class="input-field" placeholder="Ít nhất 3 ký tự, không phải 'admin'">
                             <div id="usernameValidationMsg" class="validation-message"></div>
                         </div>
                          <div>
-                            <label for="emailInput" class="font-medium">Email</label>
+                            <label for="emailInput">Email</label>
                             <input type="email" id="emailInput" class="input-field" placeholder="Nhập email hợp lệ">
                             <div id="emailValidationMsg" class="validation-message"></div>
                         </div>
                          <div>
-                            <label for="passwordInput" class="font-medium">Mật khẩu</label>
+                            <label for="passwordInput">Mật khẩu</label>
                             <input type="password" id="passwordInput" class="input-field" placeholder="Ít nhất 6 ký tự">
                             <div id="passwordValidationMsg" class="validation-message"></div>
                         </div>
                         <div class="flex items-center gap-4">
                             <button type="submit" id="submitFormBtn" class="btn btn-success" disabled>Đăng Ký</button>
-                            <span id="formStatus" class="font-semibold text-red-600">Vui lòng điền đúng thông tin.</span>
+                            <span id="formStatus" class="text-red-600">Vui lòng điền đúng thông tin.</span>
                         </div>
                     </form>
                     <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Log:</div>
@@ -1366,12 +1364,12 @@
 
             <!-- Section 8: Hardcore Examples -->
             <section id="hardcore-examples" class="content-section">
-                <h2 class="text-2xl md:text-3xl font-semibold text-blue-700 mb-6 section-title">9. Ví Dụ Khó Nhằn</h2>
+                <h2 class="text-2xl md:text-3xl text-blue-700 mb-6 section-title">9. Ví Dụ Khó Nhằn</h2>
                 
                 <div class="grid grid-cols-1 gap-6">
                     <!-- Advanced Type Ahead -->
                     <div class="interactive-demo" data-demo-id="advancedSearch" data-search-terms="tìm kiếm nâng cao, search, loading, catchError">
-                        <h3 class="font-semibold text-lg mb-3">9.1. Tìm Kiếm Nâng Cao: Loading & Xử Lý Lỗi</h3>
+                        <h3 class="text-lg mb-3">9.1. Tìm Kiếm Nâng Cao: Loading & Xử Lý Lỗi</h3>
                         <p class="mb-4">Tìm kiếm thông minh với hiệu ứng loading, xử lý lỗi và gợi ý tự động.</p>
                         
                         <input type="text" id="advancedSearchInput" placeholder="Gõ 'error' để thử lỗi API..." class="input-field mb-4">
@@ -1398,7 +1396,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                         <!-- Drag and Drop -->
                         <div class="interactive-demo" data-demo-id="dragDrop" data-search-terms="kéo thả, drag drop, mousedown, mousemove, mouseup">
-                            <h3 class="font-semibold text-lg mb-3">9.2. Kéo Thả Bằng RxJS</h3>
+                            <h3 class="text-lg mb-3">9.2. Kéo Thả Bằng RxJS</h3>
                             <p class="mb-4">Triển khai tính năng kéo thả sử dụng các Observable để xử lý sự kiện.</p>
                              <div class="demo-controls">
                                  <button id="resetDragDrop" class="btn btn-secondary btn-sm">Reset Vị Trí</button>
@@ -1422,7 +1420,7 @@
                         
                         <!-- Polling -->
                         <div class="interactive-demo" data-demo-id="polling" data-search-terms="polling, lặp lại, định kỳ, timer, takeUntil">
-                            <h3 class="font-semibold text-lg mb-3">9.3. Lấy Dữ Liệu Định Kỳ (Polling)</h3>
+                            <h3 class="text-lg mb-3">9.3. Lấy Dữ Liệu Định Kỳ (Polling)</h3>
                             <p class="mb-4">Tự động lấy dữ liệu mới từ server theo chu kỳ với khả năng dừng lại.</p>
                             
                             <div class="demo-controls">
@@ -1451,10 +1449,10 @@
 
             <!-- Section 9: Ultra Hardcore Examples -->
             <section id="ultra-hardcore-examples" class="content-section">
-                <h2 class="text-2xl md:text-3xl font-semibold text-blue-700 mb-6 section-title">10. Ví Dụ Siêu Khó Nhằn</h2>
+                <h2 class="text-2xl md:text-3xl text-blue-700 mb-6 section-title">10. Ví Dụ Siêu Khó Nhằn</h2>
                 
                 <div class="interactive-demo" data-demo-id="multiApiSearch" data-search-terms="multi api, nhiều nguồn, forkJoin, siêu khó">
-                    <h3 class="font-semibold text-lg mb-3">10.1. Gợi Ý Từ Nhiều Nguồn API</h3>
+                    <h3 class="text-lg mb-3">10.1. Gợi Ý Từ Nhiều Nguồn API</h3>
                     <p class="mb-4">Gõ vào ô tìm kiếm, hệ thống sẽ gọi đồng thời nhiều API khác nhau và kết hợp kết quả.</p>
                     
                     <input type="text" id="multiApiSearchInput" placeholder="Gõ để tìm từ 2 nguồn..." class="input-field mb-4">
@@ -1492,7 +1490,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
                     <!-- Sequential Tasks -->
                     <div class="interactive-demo" data-demo-id="sequentialTasks" data-search-terms="tuần tự, chuỗi, retry, concat, defer, thử lại">
-                        <h3 class="font-semibold text-lg mb-3">10.2. Chuỗi Tác Vụ Tuần Tự & Thử Lại</h3>
+                        <h3 class="text-lg mb-3">10.2. Chuỗi Tác Vụ Tuần Tự & Thử Lại</h3>
                         <p class="mb-4">Thực hiện một chuỗi tác vụ tuần tự, mỗi tác vụ có thể thử lại nếu gặp lỗi.</p>
                         
                         <div class="demo-controls">
@@ -1516,7 +1514,7 @@
                     
                     <!-- Infinite Scroll -->
                     <div class="interactive-demo" data-demo-id="infiniteScroll" data-search-terms="cuộn vô tận, infinite scroll, tải thêm">
-                        <h3 class="font-semibold text-lg mb-3">10.3. Cuộn Vô Tận (Infinite Scroll)</h3>
+                        <h3 class="text-lg mb-3">10.3. Cuộn Vô Tận (Infinite Scroll)</h3>
                         <p class="mb-4">Tự động tải thêm dữ liệu khi người dùng cuộn đến cuối trang.</p>
                          <div class="demo-controls">
                              <button id="resetInfiniteScrollBtn" class="btn btn-secondary btn-sm">Reset</button>
@@ -1828,7 +1826,7 @@ const { map, startWith, debounceTime, distinctUntilChanged, switchMap, shareRepl
 const createValidationStream = (inputEl, validationFn) => fromEvent(inputEl, 'input').pipe(
     map(event => event.target.value),
     startWith(inputEl.value || ''),
-    debounceTime(500),
+    debounceTime(300),
     distinctUntilChanged(),
     switchMap(validationFn),
     shareReplay(1) // Cache kết quả cuối để các stream khác không cần tính lại
