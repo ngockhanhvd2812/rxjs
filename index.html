@@ -22,6 +22,66 @@
             --info: #3b82f6;
             --dark: #1f2937;
             --light: #f9fafb;
+
+            --bg-main: #f0f4f8;
+            --bg-card: white;
+            --bg-container: white;
+            --bg-interactive: #f8fafc;
+            --bg-gradient-start: #e2e8f0;
+            --bg-gradient-mid: #f0f4f8;
+            --bg-gradient-end: #d6f0ff;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --text-heading: #1e40af;
+            --border-color: #e2e8f0;
+            --shadow-color: rgba(0, 0, 0, 0.05);
+            --input-bg: white;
+            --input-border: #d1d5db;
+            --input-focus-border: #2563eb;
+            --log-bg: #f8fafc;
+            --log-text: #475569;
+            --code-bg: #282c34;
+            --op-box-bg: #f0fff4;
+            --op-box-border: #2ecc71;
+            --op-box-text: #4b5563;
+            --nav-button-bg: #e5e7eb;
+            --nav-button-text: #4b5563;
+            --nav-button-border: #d1d5db;
+            --nav-button-active-bg: #2563eb;
+            --nav-button-active-text: white;
+            --skeleton-bg: rgba(0, 0, 0, 0.08);
+            --skeleton-shimmer: rgba(255, 255, 255, 0.5);
+        }
+
+        body.dark-mode {
+            --bg-main: #111827;
+            --bg-card: #1f2937;
+            --bg-container: #1f2937;
+            --bg-interactive: #374151;
+            --bg-gradient-start: #1a202c;
+            --bg-gradient-mid: #2d3748;
+            --bg-gradient-end: #171923;
+            --text-primary: #e5e7eb;
+            --text-secondary: #9ca3af;
+            --text-heading: #60a5fa;
+            --border-color: #4b5563;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+            --input-bg: #374151;
+            --input-border: #4b5563;
+            --input-focus-border: #3b82f6;
+            --log-bg: #111827;
+            --log-text: #9ca3af;
+            --code-bg: #0d1117;
+            --op-box-bg: rgba(59, 130, 246, 0.1);
+            --op-box-border: #3b82f6;
+            --op-box-text: #90cdf4;
+            --nav-button-bg: #374151;
+            --nav-button-text: #e5e7eb;
+            --nav-button-border: #4b5563;
+            --nav-button-active-bg: #3b82f6;
+            --nav-button-active-text: white;
+            --skeleton-bg: rgba(255, 255, 255, 0.08);
+            --skeleton-shimmer: rgba(255, 255, 255, 0.1);
         }
         
         html {
@@ -30,10 +90,17 @@
 
         body { 
             font-family: 'Inter', sans-serif; 
-            background: linear-gradient(-45deg, #e2e8f0, #f0f4f8, #cae1ff, #d6f0ff);
+            background: linear-gradient(-45deg, var(--bg-gradient-start), var(--bg-gradient-mid), var(--bg-gradient-end));
             background-size: 400% 400%;
             animation: bg-animation 15s ease infinite;
-            color: #1f2937;
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+             background-color: var(--bg-container);
+             transition: background-color 0.3s ease;
+             box-shadow: 0 10px 15px -3px var(--shadow-color), 0 4px 6px -2px var(--shadow-color);
         }
 
         #scroll-progress-bar {
@@ -58,6 +125,7 @@
             color: white;
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
         
         .marble {
@@ -133,8 +201,9 @@
             position: relative;
             padding: 15px 0;
             min-height: 70px;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid var(--border-color);
             margin-bottom: 10px;
+            transition: border-color 0.3s ease;
         }
         
         .marble-timeline::before {
@@ -149,7 +218,7 @@
             z-index: 0;
         }
         .log-box {
-            background-color: #f8fafc;
+            background-color: var(--log-bg);
             border-radius: 8px;
             padding: 12px;
             margin-top: 1rem;
@@ -158,8 +227,9 @@
             overflow-y: auto;
             font-family: 'Courier New', Courier, monospace;
             font-size: 0.85rem;
-            color: #475569;
-            border: 1px solid #e2e8f0;
+            color: var(--log-text);
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         @keyframes pulse {
@@ -169,15 +239,17 @@
 
         .operator-box, .subject-box, .example-box-interactive {
             min-height: 60px;
-            border: 2px dashed #2ecc71;
+            border: 2px dashed var(--op-box-border);
             padding: 15px;
             margin: 20px 0;
             border-radius: 8px;
             text-align: center;
-            background-color: #f0fff4;
+            background-color: var(--op-box-bg);
+            color: var(--op-box-text);
             position: relative;
             z-index: 1;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 10px var(--shadow-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         
         .operator-box::before, .subject-box::before {
@@ -185,11 +257,12 @@
             position: absolute;
             top: -10px;
             left: 10px;
-            background: white;
+            background: var(--bg-card);
             padding: 0 8px;
             font-size: 0.85rem;
             font-weight: 600;
-            color: #4b5563;
+            color: var(--text-secondary);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         
         .subject-box { 
@@ -201,33 +274,36 @@
             border-color: #e67e22; 
             background-color: #fff8f0; 
         }
+        body.dark-mode .subject-box { background-color: rgba(52, 152, 219, 0.1); border-color: #3498db; }
+        body.dark-mode .example-box-interactive { background-color: rgba(230, 126, 34, 0.1); border-color: #e67e22;}
 
         .nav-button {
             transition: all 0.3s ease;
             border-radius: 8px;
             padding: 8px 16px;
             font-weight: 500;
-            background-color: #e5e7eb;
-            color: #4b5563;
-            border: 1px solid #d1d5db;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            background-color: var(--nav-button-bg);
+            color: var(--nav-button-text);
+            border: 1px solid var(--nav-button-border);
+            box-shadow: 0 1px 2px var(--shadow-color);
         }
         
         .nav-button:hover {
-            background-color: #d1d5db;
+            background-color: var(--nav-button-active-bg);
+            color: var(--nav-button-active-text);
             transform: translateY(-2px);
         }
         
         .nav-button.active {
-            background-color: #2563eb; 
-            color: white;
-            border-color: #2563eb;
+            background-color: var(--nav-button-active-bg); 
+            color: var(--nav-button-active-text);
+            border-color: var(--nav-button-active-bg);
             box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
         }
         
         .content-section {
             display: none; 
-            animation: fadeIn 0.5s ease;
+            animation: fadeIn 0.5s ease-in-out;
         }
         
         @keyframes fadeIn {
@@ -246,7 +322,7 @@
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             margin-right: 8px; 
             margin-bottom: 8px; 
             border: none;
@@ -261,7 +337,7 @@
         .btn:hover {
             background-color: #2563eb; 
             transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
         
         .btn:disabled {
@@ -271,40 +347,19 @@
             box-shadow: none;
         }
         
-        .btn-secondary {
-            background-color: #6b7280; 
-        }
-        
-        .btn-secondary:hover {
-            background-color: #4b5563; 
-        }
-        
-        .btn-success {
-             background-color: #22c55e; 
-        }
-        
-        .btn-success:hover {
-            background-color: #16a34a; 
-        }
-        
-        .btn-warning {
-            background-color: #f59e0b; 
-        }
-        
-        .btn-warning:hover {
-            background-color: #d97706; 
-        }
-        
-        .btn-danger {
-            background-color: #ef4444; 
-        }
-        
-        .btn-danger:hover {
-            background-color: #dc2626; 
-        }
+        .btn-secondary { background-color: #6b7280; }
+        .btn-secondary:hover { background-color: #4b5563; }
+        .btn-success { background-color: #22c55e; }
+        .btn-success:hover { background-color: #16a34a; }
+        .btn-warning { background-color: #f59e0b; }
+        .btn-warning:hover { background-color: #d97706; }
+        .btn-danger { background-color: #ef4444; }
+        .btn-danger:hover { background-color: #dc2626; }
         
         .input-field {
-            border: 1px solid #d1d5db; 
+            border: 1px solid var(--input-border);
+            background-color: var(--input-bg);
+            color: var(--text-primary);
             padding: 10px 12px;
             border-radius: 8px;
             width: 100%;
@@ -316,34 +371,22 @@
         
         .input-field:focus {
             outline: none;
-            border-color: #3b82f6;
+            border-color: var(--input-focus-border);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
 
-        .input-field.is-valid {
-            border-color: #22c55e;
-        }
-        .input-field.is-valid:focus {
-            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
-        }
-        .input-field.is-invalid {
-            border-color: #ef4444;
-        }
-        .input-field.is-invalid:focus {
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
-        }
+        .input-field.is-valid { border-color: #22c55e; }
+        .input-field.is-valid:focus { box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2); }
+        .input-field.is-invalid { border-color: #ef4444; }
+        .input-field.is-invalid:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2); }
         .validation-message {
             font-size: 0.8rem;
             margin-top: -10px;
             margin-bottom: 10px;
             min-height: 1.2rem;
         }
-        .validation-message.is-valid {
-            color: #16a34a;
-        }
-        .validation-message.is-invalid {
-            color: #dc2626;
-        }
+        .validation-message.is-valid { color: #16a34a; }
+        .validation-message.is-invalid { color: #dc2626; }
         
         .input-field-sm {
             width: auto;
@@ -365,7 +408,7 @@
             user-select: none;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             text-align: center;
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
         
         .draggable.dragging { 
@@ -379,14 +422,14 @@
         #dropZone {
             width: 100%; 
             height: 150px; 
-            background-color: #ecf0f1; 
-            border: 2px dashed #bdc3c7;
+            background-color: var(--bg-interactive); 
+            border: 2px dashed var(--border-color);
             display: flex; 
             align-items: center; 
             justify-content: center;
             border-radius: 8px; 
             margin-top: 15px; 
-            color: #7f8c8d; 
+            color: var(--text-secondary); 
             font-style: italic;
             transition: all 0.3s ease;
         }
@@ -397,6 +440,7 @@
             color: #166534;
             animation: pulse-glow 1.5s infinite;
         }
+        body.dark-mode #dropZone.over { background-color: #166534; border-color: #22c55e; color: #d1e7dd; }
 
         @keyframes pulse-glow {
             0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
@@ -407,32 +451,33 @@
         #infiniteScrollContainer {
             height: 300px; 
             overflow-y: auto; 
-            border: 1px solid #d1d5db; 
+            border: 1px solid var(--border-color); 
             padding: 10px; 
-            background-color: #f9f9f9;
+            background-color: var(--bg-main);
             border-radius: 8px;
         }
         
         #infiniteScrollContainer .item {
             padding: 12px; 
-            border-bottom: 1px solid #e5e7eb; 
-            background-color: white; 
+            border-bottom: 1px solid var(--border-color); 
+            background-color: var(--bg-card); 
             margin-bottom: 8px; 
             border-radius: 6px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 3px var(--shadow-color);
         }
         
         #infiniteScrollContainer .loading-more {
             text-align: center; 
             padding: 15px; 
             font-style: italic; 
-            color: #6b7280;
+            color: var(--text-secondary);
         }
         
         .section-title {
             position: relative;
             padding-left: 24px;
             margin-bottom: 24px;
+            color: var(--text-heading);
         }
         
         .section-title::before {
@@ -447,36 +492,25 @@
             border-radius: 50%;
         }
         
-        .section-title::after {
-            content: '';
-            position: absolute;
-            left: 5px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 2px;
-            height: 100%;
-            background-color: #d1d5db;
-            z-index: -1;
-        }
-        
         .info-card {
-            background: white;
+            background: var(--bg-interactive);
             border-radius: 10px;
             padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 6px var(--shadow-color);
             margin-bottom: 24px;
             border-left: 4px solid #2563eb;
+            transition: background-color 0.3s ease;
         }
         
         .info-card h3 {
             margin-top: 0;
-            color: #1e40af;
-            font-weight: normal;
+            color: var(--text-heading);
+            font-weight: 600;
         }
         
         .progress-bar {
             height: 8px;
-            background-color: #e5e7eb;
+            background-color: var(--border-color);
             border-radius: 4px;
             overflow: hidden;
             margin: 15px 0;
@@ -490,30 +524,31 @@
         }
         
         .analogy-box {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            background: var(--bg-interactive);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 15px;
             margin: 15px 0;
         }
         
         .analogy-title {
-            color: #1e40af;
+            color: var(--text-heading);
             margin-bottom: 8px;
         }
         
         .interactive-demo {
-            background: white;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
             border-radius: 10px;
             padding: 20px;
             margin: 20px 0;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
         }
         
         .interactive-demo:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 20px var(--shadow-color);
         }
 
         .demo-controls {
@@ -524,7 +559,6 @@
             margin-bottom: 1rem;
         }
 
-        /* --- New styles for added features --- */
         .code-block-wrapper {
             opacity: 0;
             max-height: 0;
@@ -533,7 +567,7 @@
         }
         .code-block-wrapper.show {
             opacity: 1;
-            max-height: 1000px; /* Large enough to not clip content */
+            max-height: 1000px;
             margin-top: 1rem;
         }
         .copy-code-btn {
@@ -559,6 +593,107 @@
             border-radius: 4px;
             text-align: left;
         }
+        body.dark-mode .use-case-box {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        /* Dark Mode Toggle */
+        .dark-mode-toggle {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            z-index: 10;
+        }
+        .dark-mode-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+        .dark-mode-toggle .icon {
+            font-size: 22px;
+            transition: transform 0.4s ease;
+        }
+        .dark-mode .dark-mode-toggle .icon-moon { display: none; }
+        .dark-mode-toggle .icon-sun { display: none; }
+        .dark-mode .dark-mode-toggle .icon-sun { display: block; }
+        html:not(.dark-mode) .dark-mode-toggle .icon-moon { display: block; }
+        
+        /* Skeleton Loader */
+        .skeleton {
+            position: relative;
+            overflow: hidden;
+            background-color: var(--skeleton-bg);
+            border-radius: 8px;
+            min-height: 80px; /* Match log box height */
+        }
+        .skeleton::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            transform: translateX(-100%);
+            background: linear-gradient(90deg, transparent, var(--skeleton-shimmer), transparent);
+            animation: skeleton-shimmer 1.5s infinite;
+        }
+        @keyframes skeleton-shimmer {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+        
+        /* Tooltip */
+        .tooltip-container {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            cursor: help;
+        }
+        .tooltip-text {
+            visibility: hidden;
+            width: 240px;
+            background-color: #1f2937;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 10;
+            bottom: 135%;
+            left: 50%;
+            margin-left: -120px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+            font-weight: normal;
+            line-height: 1.4;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #1f2937 transparent transparent transparent;
+        }
+        .tooltip-container:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
         
         @media (max-width: 768px) {
             .nav-button {
@@ -566,16 +701,9 @@
                 font-size: 0.85rem;
                 margin-bottom: 8px;
             }
-            
-            .container {
-                padding: 15px;
-            }
-            
-            .marble {
-                min-width: 35px;
-                height: 35px;
-                font-size: 0.75rem;
-            }
+            .container { padding: 15px; }
+            .marble { min-width: 35px; height: 35px; font-size: 0.75rem; }
+            .dark-mode-toggle { top: 10px; right: 10px; }
         }
     </style>
 <script type="importmap">
@@ -594,6 +722,10 @@
 
     <div class="container mx-auto max-w-5xl bg-white p-6 md:p-8 rounded-xl shadow-xl">
         <header class="mb-8 text-center header-bg py-8 px-4">
+             <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Toggle dark mode">
+                <span class="icon icon-moon">🌙</span>
+                <span class="icon icon-sun">☀️</span>
+            </button>
             <div class="max-w-2xl mx-auto">
                 <h1 class="text-3xl md:text-4xl font-bold mb-4">Học RxJS Trực Quan</h1>
                 <p class="text-lg md:text-xl opacity-90">Từ người mới bắt đầu đến chuyên gia lập trình phản ứng</p>
@@ -621,12 +753,13 @@
             <button data-section="real-world" class="nav-button">Ví Dụ Thực Tế</button>
             <button data-section="hardcore-examples" class="nav-button">Ví Dụ Khó</button>
             <button data-section="ultra-hardcore-examples" class="nav-button">Ví Dụ Siêu Khó</button>
+            <button data-section="advanced-apps" class="nav-button">Ứng Dụng Nâng Cao</button>
         </nav>
 
         <main id="app-content">
             <!-- Section 1: Introduction -->
             <section id="intro" class="content-section active">
-                 <h2 class="text-2xl md:text-3xl text-blue-700 mb-6 section-title">1. Chào mừng đến với RxJS</h2>
+                 <h2 class="text-2xl md:text-3xl mb-6 section-title">1. Chào mừng đến với RxJS</h2>
                  <div class="info-card">
                     <h3>RxJS là gì?</h3>
                     <p>RxJS (Reactive Extensions for JavaScript) là một thư viện giúp lập trình với các luồng dữ liệu bất đồng bộ. Hãy tưởng tượng bạn đang xử lý mọi thứ, từ sự kiện click chuột, nhập liệu, đến dữ liệu từ API, như những dòng sông (streams) chảy liên tục. RxJS cung cấp cho bạn các công cụ mạnh mẽ để điều khiển, biến đổi và kết hợp những dòng sông này.</p>
@@ -658,7 +791,7 @@
 
             <!-- Section 2: Basic Operators -->
             <section id="basic-operators" class="content-section">
-                <h2 class="text-2xl md:text-3xl text-blue-700 mb-6 section-title">2. Các Operators Cơ Bản</h2>
+                <h2 class="text-2xl md:text-3xl mb-6 section-title">2. Các Operators Cơ Bản</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Map -->
                     <div class="interactive-demo" data-demo-id="map" data-search-terms="map, biến đổi">
@@ -757,7 +890,7 @@
 
             <!-- Section 3: Advanced Operators -->
             <section id="advanced-operators" class="content-section">
-                 <h2 class="text-2xl md:text-3xl text-blue-700 mb-6 section-title">3. Operators Chuyển Đổi (Flattening)</h2>
+                 <h2 class="text-2xl md:text-3xl mb-6 section-title">3. Operators Chuyển Đổi (Flattening)</h2>
                  <p class="mb-4 info-card">Các operators này xử lý "Observable của Observable" (luồng lồng trong luồng). Tình huống phổ biến là khi một sự kiện (như click) kích hoạt một tác vụ bất đồng bộ khác (như gọi API).</p>
                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- mergeMap -->
@@ -786,7 +919,9 @@
                     </div>
                     <!-- switchMap -->
                     <div class="interactive-demo" data-demo-id="switchMap" data-search-terms="switchMap, hủy, chuyển, tìm kiếm">
-                        <h3 class="text-lg mb-3"><code class="text-yellow-600">switchMap</code> - Chuyển luồng</h3>
+                         <h3 class="text-lg mb-3 tooltip-container"><code class="text-yellow-600">switchMap</code> - Chuyển luồng
+                             <span class="tooltip-text">Khi có giá trị mới từ nguồn, `switchMap` sẽ hủy (unsubscribe) luồng con (inner observable) trước đó và chuyển sang luồng con mới. Rất hữu ích để tránh các tác vụ lỗi thời.</span>
+                         </h3>
                         <p class="mb-4">Giống <code>mergeMap</code>, nhưng khi luồng cha phát giá trị mới, nó sẽ hủy luồng con trước đó và chuyển sang luồng con mới.</p>
                         <div class="demo-controls">
                             <button id="runSwitchMap" class="btn">Click để chuyển luồng</button>
@@ -861,7 +996,7 @@
             
             <!-- Section 4: Combination Operators -->
             <section id="more-advanced-operators" class="content-section">
-                <h2 class="text-2xl md:text-3xl text-blue-700 mb-6 section-title">4. Operators Kết Hợp (Combination)</h2>
+                <h2 class="text-2xl md:text-3xl mb-6 section-title">4. Operators Kết Hợp (Combination)</h2>
                 <p class="mb-4 info-card">Các operators này cho phép bạn kết hợp nhiều luồng dữ liệu lại với nhau theo những cách khác nhau.</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- combineLatest -->
@@ -920,7 +1055,7 @@
             
             <!-- Section NEW: Utility Operators -->
             <section id="utility-operators" class="content-section">
-                <h2 class="text-2xl md:text-3xl text-blue-700 mb-6 section-title">5. Utility Operators</h2>
+                <h2 class="text-2xl md:text-3xl mb-6 section-title">5. Utility Operators</h2>
                  <p class="mb-4 info-card">Đây là tập hợp các toán tử tiện ích mạnh mẽ để điều khiển luồng dữ liệu, đặc biệt hữu ích trong việc xử lý tương tác người dùng hoặc các nguồn phát dữ liệu dày đặc.</p>
                 <div class="grid grid-cols-1 gap-6">
                     <!-- DebounceTime vs ThrottleTime -->
@@ -1038,7 +1173,7 @@
 
             <!-- Section 5: Useful Operators -->
             <section id="useful-operators" class="content-section">
-                <h2 class="text-2xl md:text-3xl text-blue-700 mb-6 section-title">6. Operators Hữu Ích Khác</h2>
+                <h2 class="text-2xl md:text-3xl mb-6 section-title">6. Operators Hữu Ích Khác</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Take -->
@@ -1170,7 +1305,7 @@
 
             <!-- Section 6: Subjects -->
             <section id="subjects" class="content-section">
-                <h2 class="text-2xl md:text-3xl text-blue-700 mb-6 section-title">7. Subjects - Đa Hướng Dữ Liệu</h2>
+                <h2 class="text-2xl md:text-3xl mb-6 section-title">7. Subjects - Đa Hướng Dữ Liệu</h2>
                 
                 <div class="info-card">
                     <p>Subject là một dạng đặc biệt của Observable cho phép đa hướng dữ liệu - nhiều Observer có thể subscribe vào cùng một Subject. Subject cũng là một Observer, có thể nhận dữ liệu thông qua các phương thức next(), error() và complete().</p>
@@ -1289,7 +1424,7 @@
 
             <!-- Section 7: Real-World Examples -->
             <section id="real-world" class="content-section">
-                 <h2 class="text-2xl md:text-3xl text-blue-700 mb-6 section-title">8. Ví Dụ Thực Tế</h2>
+                 <h2 class="text-2xl md:text-3xl mb-6 section-title">8. Ví Dụ Thực Tế</h2>
                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Simple Type Ahead -->
                     <div class="interactive-demo" data-demo-id="typeahead" data-search-terms="typeahead, gợi ý tìm kiếm, search, api">
@@ -1373,7 +1508,7 @@
 
             <!-- Section 8: Hardcore Examples -->
             <section id="hardcore-examples" class="content-section">
-                <h2 class="text-2xl md:text-3xl text-blue-700 mb-6 section-title">9. Ví Dụ Khó Nhằn</h2>
+                <h2 class="text-2xl md:text-3xl mb-6 section-title">9. Ví Dụ Khó Nhằn</h2>
                 
                 <div class="grid grid-cols-1 gap-6">
                     <!-- Advanced Type Ahead -->
@@ -1410,7 +1545,7 @@
                              <div class="demo-controls">
                                  <button id="resetDragDrop" class="btn btn-secondary btn-sm">Reset Vị Trí</button>
                             </div>
-                            <div style="position: relative; height: 250px; border: 1px solid #e5e7eb; padding: 10px; background: #f9f9f9; border-radius: 8px;">
+                            <div style="position: relative; height: 250px; border: 1px solid var(--border-color); padding: 10px; background: var(--bg-interactive); border-radius: 8px;">
                                 <div id="draggableBox" class="draggable" style="top: 20px; left: 20px;">KÉO TÔI</div>
                             </div>
                             
@@ -1458,7 +1593,7 @@
 
             <!-- Section 9: Ultra Hardcore Examples -->
             <section id="ultra-hardcore-examples" class="content-section">
-                <h2 class="text-2xl md:text-3xl text-blue-700 mb-6 section-title">10. Ví Dụ Siêu Khó Nhằn</h2>
+                <h2 class="text-2xl md:text-3xl mb-6 section-title">10. Ví Dụ Siêu Khó Nhằn</h2>
                 
                 <div class="interactive-demo" data-demo-id="multiApiSearch" data-search-terms="multi api, nhiều nguồn, forkJoin, siêu khó">
                     <h3 class="text-lg mb-3">10.1. Gợi Ý Từ Nhiều Nguồn API</h3>
@@ -1544,6 +1679,52 @@
                     </div>
                 </div>
             </section>
+
+             <!-- Section 11: Advanced Applications -->
+            <section id="advanced-apps" class="content-section">
+                <h2 class="text-2xl md:text-3xl mb-6 section-title">11. Ứng Dụng Nâng Cao</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Auto-save Form -->
+                    <div class="interactive-demo" data-demo-id="autosave" data-search-terms="auto save, tự động lưu, form, debounceTime">
+                        <h3 class="text-lg mb-3">11.1. Tự Động Lưu Form</h3>
+                        <p class="mb-4">Tự động lưu nội dung khi người dùng ngừng gõ, hiển thị trạng thái lưu.</p>
+                        <div id="autosaveStatus" class="text-right text-sm italic text-gray-500 mb-2 h-5">Chưa có gì để lưu.</div>
+                        <textarea id="autosaveTextarea" class="input-field" rows="6" placeholder="Gõ vào đây, hệ thống sẽ tự động lưu..."></textarea>
+                        <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Log:</div>
+                        <div id="autosaveLogger" class="log-box"></div>
+                        <div class="mt-4 text-right"> <button class="btn btn-secondary btn-sm toggle-code-btn">Xem Code</button> </div>
+                        <div class="code-block-wrapper">
+                            <div class="relative">
+                                <pre><code class="language-javascript" data-code-id="autosave"></code></pre>
+                                <button class="btn btn-sm copy-code-btn">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- WebSocket -->
+                    <div class="interactive-demo" data-demo-id="websocket" data-search-terms="websocket, socket, retry, real-time, thời gian thực">
+                        <h3 class="text-lg mb-3">11.2. WebSocket với Tự Động Kết Nối Lại</h3>
+                        <p class="mb-4">Kết nối đến một server WebSocket, gửi tin nhắn, và tự động kết nối lại khi mất kết nối.</p>
+                        <div class="demo-controls">
+                            <button id="wsConnectBtn" class="btn btn-success">Kết Nối</button>
+                            <button id="wsDisconnectBtn" class="btn btn-danger" disabled>Ngắt Kết Nối</button>
+                        </div>
+                        <div id="wsStatus" class="my-2 p-2 rounded-lg text-center font-medium">Trạng thái: Đã ngắt kết nối.</div>
+                        <div class="flex gap-2 mt-2">
+                            <input type="text" id="wsMessageInput" class="input-field my-0" placeholder="Gửi tin nhắn..." disabled>
+                            <button id="wsSendBtn" class="btn my-0" disabled>Gửi</button>
+                        </div>
+                        <div class="text-sm text-gray-600 mb-2 font-medium mt-4">Log Tin Nhắn:</div>
+                        <div id="wsLogger" class="log-box"></div>
+                         <div class="mt-4 text-right"> <button class="btn btn-secondary btn-sm toggle-code-btn">Xem Code</button> </div>
+                        <div class="code-block-wrapper">
+                            <div class="relative">
+                                <pre><code class="language-javascript" data-code-id="websocket"></code></pre>
+                                <button class="btn btn-sm copy-code-btn">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
         
         <footer class="mt-12 pt-6 border-t border-gray-200 text-center text-gray-600 text-sm">
@@ -1555,20 +1736,68 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const { Observable, fromEvent, of, Subject, timer, combineLatest, interval, BehaviorSubject, ReplaySubject, zip, throwError, EMPTY, merge, forkJoin, concat, defer, iif } = rxjs; 
+            const { webSocket } = rxjs.webSocket;
             const { map, filter, tap, scan, delay, switchMap, debounceTime, distinctUntilChanged, mergeMap, concatMap, take, startWith, shareReplay, catchError, finalize, retry, takeUntil, exhaustMap, throttleTime, bufferTime, pairwise, withLatestFrom } = rxjs.operators; 
 
-            // --- Scroll Progress Bar (Full Page) ---
-            const scrollProgressBar = document.getElementById('scroll-progress-bar');
-            if (scrollProgressBar) {
-                 window.addEventListener('scroll', () => {
-                    const scrollTop = document.documentElement.scrollTop;
-                    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                    const scrollPercent = (scrollTop / scrollHeight) * 100;
-                    scrollProgressBar.style.width = scrollPercent + '%';
-                });
+            // --- Dark Mode ---
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+            function applyDarkMode(state) {
+                 document.documentElement.classList.toggle('dark-mode', state);
+                 localStorage.setItem('darkMode', state);
             }
+            darkModeToggle.addEventListener('click', () => {
+                const isDarkMode = document.documentElement.classList.contains('dark-mode');
+                applyDarkMode(!isDarkMode);
+            });
+            // Check for saved preference, otherwise use system preference
+            const savedMode = localStorage.getItem('darkMode');
+            if (savedMode !== null) {
+                applyDarkMode(savedMode === 'true');
+            } else {
+                applyDarkMode(prefersDark.matches);
+            }
+            prefersDark.addEventListener('change', (e) => {
+                 if (localStorage.getItem('darkMode') === null) {
+                    applyDarkMode(e.matches);
+                 }
+            });
 
-            // --- NEW: Code Snippets for all demos ---
+
+            // --- Scroll Progress Bar & Scrollspy ---
+            const scrollProgressBar = document.getElementById('scroll-progress-bar');
+            window.addEventListener('scroll', () => {
+                const scrollTop = document.documentElement.scrollTop;
+                const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrollPercent = (scrollTop / scrollHeight) * 100;
+                scrollProgressBar.style.width = scrollPercent + '%';
+            });
+            
+            const contentSections = document.querySelectorAll('.content-section');
+            const navButtons = document.querySelectorAll('.nav-button');
+
+            const scrollSpyObserver = new IntersectionObserver((entries) => {
+                let lastIntersecting = null;
+                 entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                       lastIntersecting = entry.target.id;
+                    }
+                });
+
+                if(lastIntersecting){
+                    navButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                        if(btn.dataset.section === lastIntersecting) {
+                            btn.classList.add('active');
+                        }
+                    });
+                }
+
+            }, { rootMargin: "-40% 0px -60% 0px", threshold: 0 });
+            contentSections.forEach(section => scrollSpyObserver.observe(section));
+
+
+            // --- Code Snippets ---
             const codeSnippets = {
                 firstObservable: `const { of, concatMap, delay } = rxjs;
 of('A', 'B', 'C').pipe(
@@ -1988,10 +2217,60 @@ loadMore$.pipe(
     exhaustMap(() => fetchItems(currentPage++))
 ).subscribe(newItems => {
     // Thêm item vào UI
-});`
+});`,
+                autosave: `const { fromEvent, timer } = rxjs;
+const { map, tap, debounceTime, distinctUntilChanged, switchMap, catchError } = rxjs.operators;
+const textarea = document.getElementById('autosaveTextarea');
+const statusEl = document.getElementById('autosaveStatus');
+const fakeSaveApi = (content) => timer(1000).pipe(
+    map(() => \`Đã lưu: "\${content.substring(0, 20)}..."\`)
+);
+fromEvent(textarea, 'input').pipe(
+    map(event => event.target.value),
+    tap(() => statusEl.textContent = 'Đang gõ...'),
+    debounceTime(1500),
+    distinctUntilChanged(),
+    tap(() => statusEl.textContent = 'Đang lưu...'),
+    switchMap(content => fakeSaveApi(content).pipe(
+        catchError(() => {
+            statusEl.textContent = 'Lỗi lưu!';
+            return EMPTY; // Không phát gì nếu lỗi
+        })
+    ))
+).subscribe(result => {
+    statusEl.textContent = 'Đã lưu!';
+    logTo(document.getElementById('autosaveLogger'), result);
+});`,
+                websocket: `const { webSocket } = rxjs.webSocket;
+const { retry } = rxjs.operators;
+const WS_URL = 'wss://socketsbay.com/wss/v2/1/demo/';
+let wsSubject;
+
+function connect() {
+    // Tạo WebSocket subject
+    wsSubject = webSocket({
+        url: WS_URL,
+        openObserver: { next: () => console.log('Đã kết nối!') },
+        closeObserver: { next: () => console.log('Đã ngắt kết nối.') }
+    });
+    // Subscribe để lắng nghe tin nhắn đến
+    // Tự động kết nối lại 5 lần, mỗi lần cách nhau 2s nếu có lỗi
+    wsSubject.pipe(
+        retry({ count: 5, delay: 2000 })
+    ).subscribe(
+        msg => console.log('Nhận:', msg),
+        err => console.error('Lỗi:', err)
+    );
+}
+function sendMessage(message) {
+    wsSubject.next({ message: message });
+}
+function disconnect() {
+    wsSubject.complete(); // Đóng kết nối
+}`
             };
             
-            // --- NEW: App Logic (Search, Code Toggle, Copy) ---
+            // --- App Logic (Search, Code Toggle, Copy) ---
             function setupAppFeatures() {
                 // 1. Inject code snippets and highlight
                 document.querySelectorAll('[data-code-id]').forEach(el => {
@@ -2012,23 +2291,23 @@ loadMore$.pipe(
                         distinctUntilChanged(),
                     ).subscribe(searchTerm => {
                         let isFirstVisibleDemo = true;
+                        let visibleSections = new Set();
 
                         allDemos.forEach(demo => {
                             const searchTerms = (demo.dataset.searchTerms || '').toLowerCase();
-                            const isVisible = searchTerm === '' || searchTerms.includes(searchTerm) || demo.querySelector('h3').textContent.toLowerCase().includes(searchTerm);
+                            const title = demo.querySelector('h3').textContent.toLowerCase();
+                            const isVisible = searchTerm === '' || searchTerms.includes(searchTerm) || title.includes(searchTerm);
                             
                             demo.style.display = isVisible ? '' : 'none';
 
-                            if (isVisible && isFirstVisibleDemo) {
-                                // Scroll to the first visible demo smoothly
-                                demo.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                isFirstVisibleDemo = false;
+                             if(isVisible) {
+                                const section = demo.closest('.content-section');
+                                if(section) visibleSections.add(section.id);
                             }
                         });
 
                         contentSections.forEach(section => {
-                            const anyVisibleDemos = Array.from(section.querySelectorAll('.interactive-demo')).some(d => d.style.display !== 'none');
-                            section.style.display = anyVisibleDemos ? 'block' : 'none';
+                             section.style.display = visibleSections.has(section.id) ? 'block' : 'none';
                         });
 
                         if (searchTerm === '') {
@@ -2076,10 +2355,7 @@ loadMore$.pipe(
                 });
             }
             
-            // Run new features setup
-            setupAppFeatures();
-            
-            // --- Confetti effect for Drag & Drop ---
+            // --- Confetti effect ---
             function createConfetti() {
                 const container = document.getElementById('confetti-container');
                 const dropZoneEl = document.getElementById('dropZone');
@@ -2116,22 +2392,30 @@ loadMore$.pipe(
                 }
             }
 
-
             // --- Navigation ---
-            const navButtons = document.querySelectorAll('.nav-button');
-            const contentSections = document.querySelectorAll('.content-section');
             navButtons.forEach(button => {
-                button.addEventListener('click', () => {
+                button.addEventListener('click', (e) => {
+                    const sectionId = button.dataset.section;
+                    // Reset search
+                    document.getElementById('searchInput').value = ''; 
+                    allDemos.forEach(d => d.style.display = '');
+
                     navButtons.forEach(btn => btn.classList.remove('active'));
                     button.classList.add('active');
-                    const sectionId = button.dataset.section;
+
                     contentSections.forEach(section => {
-                        section.style.display = section.id === sectionId ? 'block' : 'none';
-                        section.classList.toggle('active', section.id === sectionId);
+                        section.style.display = 'none';
+                        section.classList.remove('active');
+                        if (section.id === sectionId) {
+                            section.style.display = 'block';
+                            section.classList.add('active');
+                        }
                     });
-                    document.getElementById('searchInput').value = ''; // Clear search on nav
-                    document.querySelectorAll('.interactive-demo').forEach(d => d.style.display = ''); // Show all demos in section
-                     window.scrollTo(0, 0);
+                    
+                     const targetSection = document.getElementById(sectionId);
+                     if (targetSection) {
+                        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                     }
                 });
             });
             
@@ -2199,6 +2483,10 @@ loadMore$.pipe(
                     subscriptions.delete(key);
                 }
             }
+
+            // --- Initialize all demos ---
+            const allDemos = document.querySelectorAll('.interactive-demo');
+            setupAppFeatures();
 
             // --- Section 1: Intro ---
             const firstObserverOutputEl = document.getElementById('firstObserverOutput');
@@ -2422,7 +2710,7 @@ loadMore$.pipe(
                 resetRateLimit();
                 logTo(rateLimitLoggerEl, 'Bắt đầu lắng nghe click...');
                 const click$ = fromEvent(document.getElementById('runRateLimit'), 'click');
-                const sub = click$.pipe(
+                const sharedClick$ = click$.pipe(
                     tap(() => {
                         addMarble(document.getElementById('rateLimitInputStream'), 'Click', false, 0, '#f39c12');
                         logTo(rateLimitLoggerEl, 'Input: Click');
@@ -2430,15 +2718,16 @@ loadMore$.pipe(
                     shareReplay()
                 );
                 
-                sub.pipe(debounceTime(1000)).subscribe(() => {
+                const sub1 = sharedClick$.pipe(debounceTime(1000)).subscribe(() => {
                     addMarble(document.getElementById('debounceOutputStream'), 'Emit', true, 0, '#9b59b6');
                     logTo(rateLimitLoggerEl, 'Output Debounce: Emit');
                 });
-                sub.pipe(throttleTime(1000)).subscribe(() => {
+                 const sub2 = sharedClick$.pipe(throttleTime(1000)).subscribe(() => {
                     addMarble(document.getElementById('throttleOutputStream'), 'Emit', true, 0, '#3498db');
                     logTo(rateLimitLoggerEl, 'Output Throttle: Emit');
                 });
-                manageSub('rateLimit', sub.subscribe());
+                const sub3 = sharedClick$.subscribe();
+                manageSub('rateLimit', { unsubscribe: () => { sub1.unsubscribe(); sub2.unsubscribe(); sub3.unsubscribe(); } });
             });
             document.getElementById('resetRateLimit')?.addEventListener('click', resetRateLimit);
             
@@ -2494,11 +2783,12 @@ loadMore$.pipe(
                     map(i => `T${i}`),
                     tap(val => addMarble(document.getElementById('wlfOtherStream'), val, false, 0, '#e67e22'))
                 );
-                const sub = click$.pipe(withLatestFrom(timer$)).subscribe(val => {
+                const clickSub = click$.pipe(withLatestFrom(timer$)).subscribe(val => {
                     addMarble(document.getElementById('wlfOutputStream'), val, true);
                     logTo(wlfLoggerEl, `Kết hợp: [${val.join(',')}]`);
                 });
-                manageSub('wlf', merge(sub, timer$.subscribe())); // subscribe to timer to make it run
+                const timerSub = timer$.subscribe();
+                manageSub('wlf', { unsubscribe: () => { clickSub.unsubscribe(); timerSub.unsubscribe(); }});
             });
             document.getElementById('resetWithLatestFrom')?.addEventListener('click', resetWithLatestFrom);
 
@@ -2702,11 +2992,14 @@ loadMore$.pipe(
                     distinctUntilChanged(),
                     tap(term => {
                         logTo(typeaheadLoggerEl, `Đã qua debounce/distinct. Tìm kiếm: "${term}"`);
-                        resultEl.innerHTML = 'Đang tìm kiếm...';
+                        resultEl.innerHTML = '';
+                        resultEl.classList.add('skeleton');
                     }),
-                    switchMap(term => term ? fakeApiSearch(term) : of('Gõ để tìm kiếm'))
+                    switchMap(term => term ? fakeApiSearch(term) : of('Gõ để tìm kiếm')),
+                    finalize(() => resultEl.classList.remove('skeleton'))
                 ).subscribe(result => {
                     logTo(typeaheadLoggerEl, `API trả về: "${result}"`);
+                    resultEl.classList.remove('skeleton');
                     if (resultEl) resultEl.textContent = result;
                 });
                 manageSub('typeahead', sub);
@@ -2821,6 +3114,7 @@ loadMore$.pipe(
             const advancedSearchInputEl = document.getElementById('advancedSearchInput');
             if (advancedSearchInputEl) {
                 const advancedSearchLoggerEl = document.getElementById('advancedSearchLogger');
+                const resultStreamEl = document.getElementById('advancedSearchResultStream');
                 const fakeApiCallAdv = (query) => timer(1000).pipe(map(() => { 
                     if (query.toLowerCase() === 'error') throw new Error('API cố tình lỗi!'); 
                     return `Kết quả cho '${query}'`; 
@@ -2835,7 +3129,7 @@ loadMore$.pipe(
                     distinctUntilChanged(),
                     switchMap(query => {
                         if (!query.trim()) { 
-                            clearStream(document.getElementById('advancedSearchResultStream')); 
+                            clearStream(resultStreamEl); 
                             logTo(advancedSearchLoggerEl, 'Input trống, đã clear.');
                             return EMPTY; 
                         }
@@ -2849,8 +3143,8 @@ loadMore$.pipe(
                         );
                     })
                 ).subscribe(result => {
-                    clearStream(document.getElementById('advancedSearchResultStream')); 
-                    addMarble(document.getElementById('advancedSearchResultStream'), result, true, 0); 
+                    clearStream(resultStreamEl); 
+                    addMarble(resultStreamEl, result, true, 0); 
                     logTo(advancedSearchLoggerEl, `Hiển thị: ${result.message || result}`);
                 });
                 manageSub('advancedSearch', sub);
@@ -3092,6 +3386,113 @@ loadMore$.pipe(
                     });
                 });
                 manageSub('infiniteScroll', sub);
+            }
+
+            // --- Section 11: Advanced Applications ---
+            const autosaveTextarea = document.getElementById('autosaveTextarea');
+            if(autosaveTextarea) {
+                const autosaveStatusEl = document.getElementById('autosaveStatus');
+                const autosaveLoggerEl = document.getElementById('autosaveLogger');
+                const fakeSaveApi = (content) => timer(1500).pipe(map(() => `Đã lưu: "${content.substring(0, 30)}..."`));
+
+                const sub = fromEvent(autosaveTextarea, 'input').pipe(
+                    map(event => event.target.value),
+                    tap(() => { autosaveStatusEl.textContent = 'Đang gõ...'; autosaveStatusEl.className = 'text-right text-sm italic text-blue-500 mb-2 h-5'; }),
+                    debounceTime(1500),
+                    distinctUntilChanged(),
+                    filter(content => content.trim().length > 0),
+                    tap(() => { autosaveStatusEl.textContent = 'Đang lưu...'; autosaveStatusEl.className = 'text-right text-sm italic text-yellow-500 mb-2 h-5 animate-pulse'; }),
+                    switchMap(content => fakeSaveApi(content).pipe(
+                        catchError(() => {
+                            autosaveStatusEl.textContent = 'Lưu thất bại!';
+                            autosaveStatusEl.className = 'text-right text-sm italic text-red-500 mb-2 h-5';
+                            return EMPTY;
+                        })
+                    ))
+                ).subscribe(result => {
+                    autosaveStatusEl.textContent = 'Đã lưu!';
+                    autosaveStatusEl.className = 'text-right text-sm italic text-green-500 mb-2 h-5';
+                    logTo(autosaveLoggerEl, result);
+                });
+                manageSub('autosave', sub);
+            }
+
+            const wsConnectBtn = document.getElementById('wsConnectBtn');
+            if (wsConnectBtn) {
+                const wsDisconnectBtn = document.getElementById('wsDisconnectBtn');
+                const wsSendBtn = document.getElementById('wsSendBtn');
+                const wsMessageInput = document.getElementById('wsMessageInput');
+                const wsStatusEl = document.getElementById('wsStatus');
+                const wsLoggerEl = document.getElementById('wsLogger');
+
+                const WS_URL = 'wss://socketsbay.com/wss/v2/1/demo/';
+                let wsSubject;
+
+                const updateWsUi = (state) => {
+                    if (state === 'connected') {
+                        wsStatusEl.textContent = 'Đã kết nối';
+                        wsStatusEl.className = 'my-2 p-2 rounded-lg text-center font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+                        wsConnectBtn.disabled = true;
+                        wsDisconnectBtn.disabled = false;
+                        wsMessageInput.disabled = false;
+                        wsSendBtn.disabled = false;
+                    } else if (state === 'connecting') {
+                        wsStatusEl.textContent = 'Đang kết nối...';
+                        wsStatusEl.className = 'my-2 p-2 rounded-lg text-center font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 animate-pulse';
+                    } else { // disconnected
+                         wsStatusEl.textContent = 'Đã ngắt kết nối';
+                         wsStatusEl.className = 'my-2 p-2 rounded-lg text-center font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+                         wsConnectBtn.disabled = false;
+                         wsDisconnectBtn.disabled = true;
+                         wsMessageInput.disabled = true;
+                         wsSendBtn.disabled = true;
+                    }
+                };
+
+                function connect() {
+                    logTo(wsLoggerEl, `Đang kết nối đến ${WS_URL}...`);
+                    updateWsUi('connecting');
+                    
+                    wsSubject = webSocket({
+                        url: WS_URL,
+                        openObserver: { next: () => {
+                            logTo(wsLoggerEl, 'Kết nối thành công!');
+                            updateWsUi('connected');
+                        }},
+                        closeObserver: { next: (e) => {
+                            logTo(wsLoggerEl, `Đã ngắt kết nối. Reason: ${e.reason || 'Unknown'}`, true);
+                            updateWsUi('disconnected');
+                            cleanupSub('websocket');
+                        }}
+                    });
+
+                    const sub = wsSubject.pipe(
+                        retry({ count: 5, delay: (err, retryCount) => {
+                            logTo(wsLoggerEl, `Mất kết nối. Thử lại lần ${retryCount} sau 2s...`, true);
+                            updateWsUi('connecting');
+                            return timer(2000);
+                        }})
+                    ).subscribe({
+                        next: msg => logTo(wsLoggerEl, `Nhận: ${JSON.stringify(msg)}`),
+                        error: err => { 
+                            logTo(wsLoggerEl, `Lỗi không thể phục hồi: ${err.type || 'Unknown'}`, true);
+                            updateWsUi('disconnected');
+                        }
+                    });
+                    manageSub('websocket', sub);
+                }
+                
+                wsConnectBtn.addEventListener('click', connect);
+                wsDisconnectBtn.addEventListener('click', () => { if (wsSubject) wsSubject.complete(); });
+                wsSendBtn.addEventListener('click', () => {
+                    const msg = wsMessageInput.value;
+                    if (msg && wsSubject) {
+                        logTo(wsLoggerEl, `Gửi: ${msg}`);
+                        wsSubject.next({ message: msg });
+                        wsMessageInput.value = '';
+                    }
+                });
+                updateWsUi('disconnected');
             }
             
             // --- Initialize first section ---
