@@ -3,10 +3,8 @@
 
 # 🚀 Học RxJS Trực Quan
 
-[![Phiên bản](https://img.shields.io/badge/version-1.0.0-blue)]() [![Giấy phép](https://img.shields.io/badge/license-MIT-green)]()
-
 > **Từ người mới bắt đầu đến chuyên gia lập trình phản ứng**  
-> Một trang hướng dẫn tương tác, trực quan, giúp mày nắm vững RxJS thông qua hàng loạt ví dụ “marble diagrams” và demo thực tế.
+> Một trang hướng dẫn tương tác, trực quan, giúp nắm vững RxJS thông qua hàng loạt ví dụ “marble diagrams” và demo thực tế.
 
 ---
 
