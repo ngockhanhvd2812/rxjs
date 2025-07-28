@@ -1,5 +1,4 @@
-[![Website](https://img.shields.io/badge/Live_Demo-Click_Here-blue?style=for-the-badge&logo=google-chrome)](https://ngockhanhvd2812.github.io/rxjs/)
-
+[![🌐 Xem Website](https://img.shields.io/badge/Live_Demo-Click_Here-orange?style=for-the-badge&logo=firefox-browser&logoColor=white)](https://ngockhanhvd2812.github.io/rxjs/)
 
 # 🚀 Học RxJS Trực Quan
 
